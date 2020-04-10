@@ -46,7 +46,8 @@ app.post("/new_account", function(req, res){
     accept: 'application/json',
     url: 'https://rahakott.io/api/v1.1/wallets/new',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   };
 
@@ -58,31 +59,6 @@ app.post("/new_account", function(req, res){
 
   request.write(jsonData);
   request.end();
-  // var options = {
-  //   'method': 'POST',
-  //   'url': 'https://rahakott.io/api/v1.1/wallets/new',
-  //   'headers': {
-  //     'Content-Type': 'application/json',
-  //     'Cookie': '__cfduid=d7a2c5f29dbb266750c05eebc788f40dd1586433789'
-  //   },
-  //   body: JSON.stringify({"api_key":"219086bc0faedeb4cb40ca8adfadd9ff","name":"New wallet","currency":"BTC"})
-  //
-  // };
-  // request(options, function (error, response) {
-  //   if (error) throw new Error(error);
-  //   console.log(response.body);
-  // });
-
-
-  // const url = "https://rahakott.io/api/v1.1/wallets/new?api_key=219086bc0faedeb4cb40ca8adfadd9ff&name=New wallet&currency=BTC";
-  // https.get(url, function(response){
-  //   console.log(response.statusCode);
-  //
-  //   response.on("data", function(data){
-  //     const walletData = JSON.parse(data);
-  //     console.log(walletData);
-  //   });
-  // });
 
   // if(password === cPassword){
   //   console.log("Accepted");
