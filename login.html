@@ -21,9 +21,9 @@
     <img class="mb-4" src="images\logo_wallet.png" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
 
-    <input type="text" name="account" class="form-control top" placeholder="Account (wallet name)" required autofocus>
+    <input type="text" name="account" class="form-control top" placeholder="Account (wallet name)" autocomplete="off" required autofocus>
     <input type="password" name="password" class="form-control bottom" placeholder="Password" required>
-
+    <!-- The button (submit) is trigger this "POST" request -->
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 
     <p>new user? <a href="new_account">create new account</a></p>

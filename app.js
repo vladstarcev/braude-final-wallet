@@ -1,3 +1,4 @@
+// express is give us options to use "get" and "post" requests
 const express = require("express");
 
 /* allow us to pass data to post function
@@ -13,6 +14,7 @@ const mongoose = require("mongoose");
 
 /* to connect URL and creating "userDB" if it's not exist
 (and preserve deprecation warnings) */
+// it is place where mongodb hosted locally
 mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -20,28 +22,34 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
 
 
 // schema of our data
-const userSchema = new mongoose.Schema({
-  account: String,
-  password: String,
-  oid: String,
-  currency: String,
-  wallet_name: String,
-  current_address: String,
-  created_at: String,
-  updated_at: String
-});
-
 // const userSchema = new mongoose.Schema({
 //   account: String,
 //   password: String,
-//   wallet: [{
-//     oid: String,
-//     currency: String,
-//     wallet_name: String
-//   }]
+//   oid: String,
+//   currency: String,
+//   wallet_name: String,
+//   current_address: String,
+//   created_at: Date,
+//   updated_at: Date
 // });
 
-// create new collection - Wallet
+// const walletSchema = new mongoose.Schema({
+//   oid: String,
+//   currency: String
+// });
+
+const userSchema = new mongoose.Schema({
+  account: String,
+  password: String,
+  wallet: [{
+    oid: String,
+    currency: String
+    //wallet_name: String
+  }]
+});
+
+/* create new module - Wallet where "wallet" is collection name and
+"userName" is schemaName */
 const Wallet = mongoose.model("Wallet", userSchema);
 
 const app = express();
@@ -57,6 +65,7 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/login.html");
 });
 
+// "post request" is get data back from our web page to server
 app.post("/", function(req, res) {
   var account = req.body.account;
   var password = req.body.password;
@@ -104,8 +113,8 @@ app.post("/new_account", function(req, res) {
         /*********************** CREATE NEW WALLET **************************/
         const data = {
           api_key: "219086bc0faedeb4cb40ca8adfadd9ff",
-          name: account,
-          currency: "BTC"
+          name: account, // "+ currency +"- it is need to be changed (when we add another currency)
+          currency: "LTC"
         };
         const jsonData = JSON.stringify(data);
 
@@ -135,25 +144,29 @@ app.post("/new_account", function(req, res) {
             const oid = newWalletData.oid;
             const currency = newWalletData.currency;
             const walletName = newWalletData.name;
-            const currentAddress = newWalletData.current_address;
-            const createdDate = newWalletData.created_at;
-            const updatedDate = newWalletData.updated_at;
-            console.log(currency, walletName, oid);
+            // const currentAddress = newWalletData.current_address;
+            // const createdDate = newWalletData.created_at;
+            // const updatedDate = newWalletData.updated_at;
+
+
+            console.log(currency, oid, walletName);
 
             /***********************SET DATA TO DB*********************************/
             // setting data to database
             const newWallet = new Wallet({
               account: account,
               password: password,
-              oid: oid,
-              currency: currency,
-              wallet_name: walletName,
-              current_address: currentAddress,
-              created_at: createdDate,
-              updated_at: updatedDate
+              wallet: [{
+                oid: oid,
+                currency: currency
+              }]
+              // wallet_name: walletName,
+              // current_address: currentAddress,
+              // created_at: createdDate,
+              // updated_at: updatedDate
             });
 
-            // to save newWallet document into Wallet collection inside (every time)
+            // to save newWallet document into Wallet collection inside
             newWallet.save(function(err) {
               if (err) return console.error(err);
               console.log("Succesfully saved in userDB");
@@ -165,6 +178,7 @@ app.post("/new_account", function(req, res) {
         request.end();
 
         // redirect to "main screen"
+        //when we redirect we "jump" to get request of route
         res.redirect('/main_screen');
       } else res.status(401).end('Incorrect Username and/or Password!');
     }
