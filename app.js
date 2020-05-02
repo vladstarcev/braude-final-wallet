@@ -12,6 +12,8 @@ const request = require("request");
 const https = require("https");
 const mongoose = require("mongoose");
 
+const QRCode = require('qrcode');
+
 //const rahakottData = require(__dirname + "/data.js");
 //console.log(rahakottData());
 
@@ -22,23 +24,6 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-
-// schema of our data
-// const userSchema = new mongoose.Schema({
-//   account: String,
-//   password: String,
-//   oid: String,
-//   currency: String,
-//   wallet_name: String,
-//   current_address: String,
-//   created_at: Date,
-//   updated_at: Date
-// });
-
-// const walletSchema = new mongoose.Schema({
-//   oid: String,
-//   currency: String
-// });
 
 const userSchema = new mongoose.Schema({
   account: String,
@@ -79,8 +64,9 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-// "post request" is get data back from our web page to server
-app.post("/", function(req, res) {
+// "post request" is getting data back from our web page to server
+app.post("/login", function(req, res) {
+
   var account = req.body.account;
   var password = req.body.password;
   console.log(account, password);
@@ -132,30 +118,37 @@ app.post("/", function(req, res) {
       res.redirect('main_screen');
     } else res.status(401).end('Incorrect Username and/or Password!');
   });
+
 });
 
 /*************************** MAIN SCREEN **********************************/
 app.get("/main_screen", function(req, res) {
-  res.render('main_screen', {
-    accountName: name,
-    publicAddress: publicAddress
+
+  QRCode.toDataURL(JSON.stringify(publicAddress),{ errorCorrectionLevel: 'H' }, function(err, url) {
+    //console.log(url);
+
+    res.render('main_screen', {
+      accountName: name,
+      qrcode: url,
+      publicAddress: publicAddress
+    });
   });
   //res.redirect(req.originalUrl);
 });
 
 /************************** NEW USER SCREEN *****************************/
-app.get("/new_account", function(req, res) {
-  res.sendFile(__dirname + "/new_account.html");
-});
+// app.get("/new_account", function(req, res) {
+//   res.sendFile(__dirname + "/new_account.html");
+// });
 
 app.post("/new_account", function(req, res) {
-  var account = req.body.account;
-  var password = req.body.password;
-  var cPassword = req.body.cPassword;
-  console.log(account, password, cPassword);
+  var newAccount = req.body.newAccount;
+  var newPassword = req.body.newPassword;
+  var confirmNewPassword = req.body.confirmNewPassword;
+  console.log(newAccount, newPassword, confirmNewPassword);
 
   Wallet.findOne({
-    account: account
+    account: newAccount
   }, function(err, wallet) {
     if (err) return console.log(err);
     if (wallet) {
@@ -163,12 +156,12 @@ app.post("/new_account", function(req, res) {
       console.log("Error. Account with this name already exist.")
       res.status(401).end('Incorrect Username and/or Password!');
     } else {
-      if (password === cPassword) {
+      if (newPassword === confirmNewPassword) {
         /*********************** CREATE NEW WALLET **************************/
         const data = {
           api_key: "219086bc0faedeb4cb40ca8adfadd9ff",
-          name: account, // "+ currency +"- it is need to be changed (when we add another currency)
-          currency: "LTC"
+          name: newAccount, // "+ currency +"- it is need to be changed (when we add another currency)
+          currency: "BTC"
         };
         const jsonData = JSON.stringify(data);
 
@@ -203,7 +196,7 @@ app.post("/new_account", function(req, res) {
             const updatedDate = newWalletData.updated_at;
 
 
-            name = account;
+            name = newAccount;
             publicAddress = currentAddress;
 
             console.log(currency, oid, walletName);
@@ -211,8 +204,8 @@ app.post("/new_account", function(req, res) {
             /***********************SET DATA TO DB*********************************/
             // setting data to database
             const newWallet = new Wallet({
-              account: account,
-              password: password,
+              account: newAccount,
+              password: newPassword,
               wallet: [{
                 oid: oid,
                 currency: currency,
