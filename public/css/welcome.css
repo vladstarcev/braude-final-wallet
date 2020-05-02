@@ -1,0 +1,49 @@
+
+
+.right {
+  background-color: #f4eeff;
+  height: 800px;
+  border-left: 1px solid black;
+  text-align: center;
+  padding-top: 250px;
+}
+
+.left {
+  background-color: #dcd6f7;
+  height: 800px;
+}
+
+.login-btn {
+  width: 80%;
+}
+
+.create-btn {
+  width: 80%;
+  margin-top: 5px;
+}
+
+
+.login-form {
+  width: 80%;
+  margin: auto;
+  background-color: white;
+  display: none;
+  padding-top: 10px;
+}
+
+.create-form {
+  width: 80%;
+  margin: auto;
+  background-color: white;
+  display: none;
+  padding-top: 10px;
+}
+
+.input-field {
+  width: 70%;
+  margin: auto;
+}
+
+.login-btn-small {
+  width: 60%;
+}
