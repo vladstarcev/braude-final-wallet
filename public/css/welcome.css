@@ -1,16 +1,48 @@
+body {
+  text-align: center;
+}
 
+.col-sm-9 {
+  padding: 0;
+}
+
+hr {
+  width: 90%;
+}
+
+.jumbotron {
+  background-color: white;
+}
+
+.carousel {
+  width:600px;
+  height:401px;
+  margin: auto;
+  border: 1px solid black;
+}
+
+.carousel-caption {
+  color: black;
+}
 
 .right {
-  background-color: #f4eeff;
-  height: 800px;
-  border-left: 1px solid black;
+  height: 900px;
   text-align: center;
-  padding-top: 250px;
+  padding-top: 350px;
 }
 
 .left {
-  background-color: #dcd6f7;
-  height: 800px;
+  height: 900px;
+  border-right: 1px solid black;
+}
+
+.mid-row {
+  height: 450px;
+  padding: 0;
+}
+
+.carousel {
+  margin: 0 auto;
 }
 
 .login-btn {
@@ -19,7 +51,7 @@
 
 .create-btn {
   width: 80%;
-  margin-top: 5px;
+  margin-top: 15px;
 }
 
 
@@ -41,7 +73,7 @@
 
 .input-field {
   width: 70%;
-  margin: auto;
+  display: inline;
 }
 
 .login-btn-small {

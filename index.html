@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="public/css/welcome.css">
   <title>Hello, world!</title>
@@ -15,31 +14,92 @@
 
 <body>
   <div class="row">
-    <div class="col-sm-8 left">
+    <div class="col-sm-9 left">
+      <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <img src="public/images/logo_wallet.png" height="150px" width="150px" alt="logo">
+          <h1 class="display-4">Welcome to CryptoWallet!</h1>
+          <p class="lead">The only piece of software you need to manage your crtptocurrencies!</p>
+        </div>
+      </div>
+      <hr>
+      <div class="row mid-row">
+        <div class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="public/images/crypto1.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>FAST</h5>
+                <p>Transactions are almost instant!</p>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <img src="public/images/crypto2.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>CONVENIENT</h5>
+                <p>User-friendly interface and pretty design!</p>
+              </div>
+            </div>
+
+            <div class="carousel-item">
+              <img src="public/images/crypto3.jpg" class="d-block w-100" alt="...">
+              <div class="carousel-caption d-none d-md-block">
+                <h5>SECURE</h5>
+                <p>Your sensitive data is under our top level security!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
 
     </div>
 
-    <div class="col-sm-4 right">
+
+
+    <div class="col-sm-3 right">
+      <h1>Get Started</h1>
       <button type="button" class="btn btn-primary login-btn">LOG IN</button>
       <form class="login-form">
         <div class="form-group">
+          <svg class="bi bi-person-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+          </svg>
           <input type="email" class="form-control input-field" placeholder="username">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control input-field" placeholder="password" >
+          <svg class="bi bi-lock-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect width="11" height="9" x="2.5" y="7" rx="2" />
+            <path fill-rule="evenodd" d="M4.5 4a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z" clip-rule="evenodd" />
+          </svg>
+          <input type="password" class="form-control input-field" placeholder="password">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
       <button type="button" class="btn btn-primary create-btn">CREATE WALLET</button>
       <form class="create-form">
         <div class="form-group">
+          <svg class="bi bi-person-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+          </svg>
           <input type="email" class="form-control input-field" placeholder="username">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control input-field" placeholder="password" >
+          <svg class="bi bi-unlock-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M.5 9a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2h-7a2 2 0 01-2-2V9z" />
+            <path fill-rule="evenodd" d="M8.5 4a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z" clip-rule="evenodd" />
+          </svg>
+          <input type="password" class="form-control input-field" placeholder="password">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control input-field" placeholder="confirm password" >
+          <svg class="bi bi-lock-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect width="11" height="9" x="2.5" y="7" rx="2" />
+            <path fill-rule="evenodd" d="M4.5 4a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z" clip-rule="evenodd" />
+          </svg>
+          <input type="password" class="form-control input-field" placeholder="confirm password">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

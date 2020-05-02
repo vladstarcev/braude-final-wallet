@@ -76,7 +76,7 @@ app.use(bodyParser.urlencoded({
 /****************************** LOGIN SCREEN ******************************/
 // app.get("/")-what happens whet users enter to my homepage
 app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/login.html");
+  res.sendFile(__dirname + "/index.html");
 });
 
 // "post request" is get data back from our web page to server
