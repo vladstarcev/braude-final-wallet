@@ -31,7 +31,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a class="nav-link" href="">Name</a>
+                <a class="nav-link" href=""> <%= accountName %> </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="">Ballance</a>
@@ -79,7 +79,7 @@
       <div class="row">
         <div class="feature-box col-lg-4">
           <h3>Your address is:</h3>
-          <h3>3skjfodsijdsjsds</h3>
+          <h3> <%= publicAddress %> </h3>
           <p>Payment request URL</p>
           <button type="button" class="btn btn-outline-primary"><i class="fas fa-paper-plane"></i>Send</button>
           <button type="button" class="btn btn-outline-primary"><i class="fas fa-blender"></i>Mixer</button>
@@ -110,6 +110,9 @@
     </footer>
 
   </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/d3js/5.15.0/d3.min.js"></script>
+  <script src="app.js" charset="utf-8"></script>
 
 </body>
 
