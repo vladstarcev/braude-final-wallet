@@ -124,7 +124,9 @@ app.post("/login", function(req, res) {
 /*************************** MAIN SCREEN **********************************/
 app.get("/main_screen", function(req, res) {
 
-  QRCode.toDataURL(JSON.stringify(publicAddress),{ errorCorrectionLevel: 'H' }, function(err, url) {
+  QRCode.toDataURL(JSON.stringify(publicAddress), {
+    errorCorrectionLevel: 'H'
+  }, function(err, url) {
     //console.log(url);
 
     res.render('main_screen', {
@@ -142,13 +144,14 @@ app.get("/main_screen", function(req, res) {
 // });
 
 app.post("/new_account", function(req, res) {
-  var newAccount = req.body.newAccount;
+
+  var newUsername = req.body.newUsername;
   var newPassword = req.body.newPassword;
   var confirmNewPassword = req.body.confirmNewPassword;
-  console.log(newAccount, newPassword, confirmNewPassword);
+  console.log(newUsername, newPassword, confirmNewPassword);
 
   Wallet.findOne({
-    account: newAccount
+    account: newUsername
   }, function(err, wallet) {
     if (err) return console.log(err);
     if (wallet) {
@@ -160,7 +163,7 @@ app.post("/new_account", function(req, res) {
         /*********************** CREATE NEW WALLET **************************/
         const data = {
           api_key: "219086bc0faedeb4cb40ca8adfadd9ff",
-          name: newAccount, // "+ currency +"- it is need to be changed (when we add another currency)
+          name: newUsername, // "+ currency +"- it is need to be changed (when we add another currency)
           currency: "BTC"
         };
         const jsonData = JSON.stringify(data);
@@ -196,7 +199,7 @@ app.post("/new_account", function(req, res) {
             const updatedDate = newWalletData.updated_at;
 
 
-            name = newAccount;
+            name = newUsername;
             publicAddress = currentAddress;
 
             console.log(currency, oid, walletName);
@@ -204,7 +207,7 @@ app.post("/new_account", function(req, res) {
             /***********************SET DATA TO DB*********************************/
             // setting data to database
             const newWallet = new Wallet({
-              account: newAccount,
+              account: newUsername,
               password: newPassword,
               wallet: [{
                 oid: oid,
