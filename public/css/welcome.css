@@ -10,6 +10,11 @@ hr {
   width: 90%;
 }
 
+.crypto {
+  font-weight: bold;
+  color: #0779e4;
+}
+
 .jumbotron {
   background-color: white;
 }
@@ -19,6 +24,7 @@ hr {
   height:401px;
   margin: auto;
   border: 1px solid black;
+  margin: 0 auto;
 }
 
 .carousel-caption {
@@ -29,6 +35,7 @@ hr {
   height: 900px;
   text-align: center;
   padding-top: 350px;
+  background-color: #0779e4;
 }
 
 .left {
@@ -41,12 +48,9 @@ hr {
   padding: 0;
 }
 
-.carousel {
-  margin: 0 auto;
-}
-
 .login-btn {
   width: 80%;
+
 }
 
 .create-btn {
@@ -56,19 +60,23 @@ hr {
 
 
 .login-form {
-  width: 80%;
+  width: 78%;
   margin: auto;
   background-color: white;
   display: none;
   padding-top: 10px;
+  border-radius: 0 0 10px 10px;
+  padding-bottom: 5px;
 }
 
 .create-form {
-  width: 80%;
+  width: 78%;
   margin: auto;
   background-color: white;
   display: none;
   padding-top: 10px;
+  border-radius: 0 0 10px 10px;
+  padding-bottom: 5px;
 }
 
 .input-field {
