@@ -10,6 +10,11 @@ hr {
   width: 90%;
 }
 
+.crypto {
+  font-weight: bold;
+  color: #0779e4;
+}
+
 .jumbotron {
   background-color: white;
 }
@@ -29,6 +34,7 @@ hr {
   height: 900px;
   text-align: center;
   padding-top: 350px;
+  background-color: #0779e4;
 }
 
 .left {
@@ -47,6 +53,7 @@ hr {
 
 .login-btn {
   width: 80%;
+
 }
 
 .create-btn {
@@ -61,6 +68,8 @@ hr {
   background-color: white;
   display: none;
   padding-top: 10px;
+  border-radius: 0 0 10px 10px;
+  padding-bottom: 5px;
 }
 
 .create-form {
@@ -69,6 +78,8 @@ hr {
   background-color: white;
   display: none;
   padding-top: 10px;
+  border-radius: 0 0 10px 10px;
+  padding-bottom: 5px;
 }
 
 .input-field {
