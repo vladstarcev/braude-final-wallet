@@ -24,6 +24,7 @@ hr {
   height:401px;
   margin: auto;
   border: 1px solid black;
+  margin: 0 auto;
 }
 
 .carousel-caption {
@@ -47,10 +48,6 @@ hr {
   padding: 0;
 }
 
-.carousel {
-  margin: 0 auto;
-}
-
 .login-btn {
   width: 80%;
 
@@ -63,7 +60,7 @@ hr {
 
 
 .login-form {
-  width: 80%;
+  width: 78%;
   margin: auto;
   background-color: white;
   display: none;
@@ -73,7 +70,7 @@ hr {
 }
 
 .create-form {
-  width: 80%;
+  width: 78%;
   margin: auto;
   background-color: white;
   display: none;

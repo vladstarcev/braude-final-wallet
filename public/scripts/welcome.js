@@ -1,9 +1,9 @@
 $(".login-btn").on("click", function() {
-  $(".login-form").slideToggle("slow");
-  $(".create-form").slideUp("slow");
+  $(".login-form").slideToggle();
+  $(".create-form").slideUp();
 });
 
 $(".create-btn").on("click", function() {
-  $(".create-form").slideToggle("slow");
-  $(".login-form").slideUp("slow");
+  $(".create-form").slideToggle();
+  $(".login-form").slideUp();
 });
