@@ -64,7 +64,7 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-/****************************** LOGIN (Homepage) ******************************/
+/***************************** LOGIN (Homepage) *****************************/
 // "post request" is getting data back from our web page to server
 app.post("/login", function(req, res) {
 
@@ -80,37 +80,7 @@ app.post("/login", function(req, res) {
     if (wallet) {
       console.log(wallet);
       //console.log(wallet.wallet[0].oid);
-
-      /****************************** Get a Wallet Address List ******************************/
-      var options = {
-        'method': 'POST',
-        'url': 'https://rahakott.io/api/v1.1/addresses',
-        'headers': {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
-        },
-        body: JSON.stringify({
-          "api_key": "219086bc0faedeb4cb40ca8adfadd9ff",
-          "wallet": wallet.wallet[0].oid,
-          "offset": 0,
-          "limit": 50
-        })
-
-      };
-
-      request(options, function(error, response) {
-        if (error) throw new Error(error);
-        console.log(response.body);
-        const newWalletData = JSON.parse(response.body);
-        console.log(newWalletData.addresses[0].address);
-        publicAddress = newWalletData.addresses[0].address;
-        console.log(publicAddress);
-      });
-
-      /************************************************************************/
-
-      //publicAddress  = rahakottData();
+      publicAddress = wallet.wallet[0].current_address;
       name = account;
 
       res.redirect('main_screen');
@@ -118,24 +88,7 @@ app.post("/login", function(req, res) {
   });
 });
 
-/*************************** MAIN SCREEN **********************************/
-app.get("/main_screen", function(req, res) {
-
-  QRCode.toDataURL(JSON.stringify(publicAddress), {
-    errorCorrectionLevel: 'H'
-  }, function(err, url) {
-    //console.log(url);
-
-    res.render('main_screen', {
-      accountName: name,
-      qrcode: url,
-      publicAddress: publicAddress
-    });
-  });
-  //res.redirect(req.originalUrl);
-});
-
-/************************** CREATE WALLET (Homepage) *****************************/
+/************************** CREATE WALLET (Homepage) *************************/
 // app.get("/new_account", function(req, res) {
 //   res.sendFile(__dirname + "/new_account.html");
 // });
@@ -197,9 +150,9 @@ app.post("/new_account", function(req, res) {
             name = newUsername;
             publicAddress = currentAddress;
 
-            console.log(currency, oid, walletName);
+            console.log(currency, oid, walletName, publicAddress);
 
-            /***********************SET DATA TO DB*********************************/
+            /***********************SET DATA TO DB****************************/
 
             const newWallet = new Wallet({
               account: newUsername,
@@ -232,6 +185,23 @@ app.post("/new_account", function(req, res) {
       } else res.status(401).end('Incorrect Username and/or Password!');
     }
   });
+});
+
+/**************************** MAIN SCREEN ************************************/
+app.get("/main_screen", function(req, res) {
+
+  QRCode.toDataURL(JSON.stringify(publicAddress), {
+    errorCorrectionLevel: 'H'
+  }, function(err, url) {
+    //console.log(url);
+
+    res.render('main_screen', {
+      accountName: name,
+      qrcode: url,
+      publicAddress: publicAddress
+    });
+  });
+
 });
 
 //mongoose.connection.close();
