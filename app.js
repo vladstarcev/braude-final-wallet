@@ -49,6 +49,7 @@ const app = express();
 recommended to use "let" instead of "var" */
 let name;
 let publicAddress;
+//var newWalletData;
 
 // for "EJS" - templates using
 app.set('view engine', 'ejs');
@@ -111,77 +112,62 @@ app.post("/new_account", function(req, res) {
     } else {
       if (newPassword === confirmNewPassword) {
 
-        /*********************** CREATE NEW WALLET **************************/
-        const data = {
-          api_key: "219086bc0faedeb4cb40ca8adfadd9ff",
-          name: newUsername,
-          currency: "BTC"
-        };
-        const jsonData = JSON.stringify(data);
-
-        const url = "https://rahakott.io/api/v1.1/wallets/new";
-
-        const options = {
-          method: 'POST',
-          url: url,
-          json: true,
-          headers: {
+        var options = {
+          'method': 'POST',
+          'url': 'https://rahakott.io/api/v1.1/wallets/new',
+          'headers': {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
+            'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
+          },
+          body: JSON.stringify({
+            "api_key": "219086bc0faedeb4cb40ca8adfadd9ff",
+            "name": newUsername,
+            "currency": "BTC"
+          })
         };
 
-        const request = https.request(url, options, function(response, err) {
-          if (err) return console.error(err);
+        request(options, function(error, response) {
+          if (error) throw new Error(error);
+          console.log(response.body);
+          const newWalletData = JSON.parse(response.body);
+          //console.log(newWalletData);
+          const oid = newWalletData.oid;
+          const currency = newWalletData.currency;
+          const walletName = newWalletData.name;
+          const currentAddress = newWalletData.current_address;
+          const createdDate = newWalletData.created_at;
+          const updatedDate = newWalletData.updated_at;
 
-          // getting data from Rahakott
-          response.on("data", function(data) {
-            //console.log(JSON.parse(data)); // can be error type also
+          name = newUsername;
+          publicAddress = currentAddress;
 
-            const newWalletData = JSON.parse(data);
+          console.log(currency, oid, walletName, publicAddress);
 
-            const oid = newWalletData.oid;
-            const currency = newWalletData.currency;
-            const walletName = newWalletData.name;
-            const currentAddress = newWalletData.current_address;
-            const createdDate = newWalletData.created_at;
-            const updatedDate = newWalletData.updated_at;
+          /*********************** SET DATA TO DB ****************************/
 
-            name = newUsername;
-            publicAddress = currentAddress;
-
-            console.log(currency, oid, walletName, publicAddress);
-
-            /***********************SET DATA TO DB****************************/
-
-            const newWallet = new Wallet({
-              account: newUsername,
-              password: newPassword,
-              wallet: [{
-                oid: oid,
-                currency: currency,
-                wallet_name: walletName,
-                current_address: currentAddress,
-                created_at: createdDate,
-                updated_at: updatedDate
-              }]
-            });
-
-            // to save newWallet document into Wallet collection
-            newWallet.save(function(err) {
-              if (err) return console.error(err);
-              console.log("Succesfully saved in userDB");
-            });
+          const newWallet = new Wallet({
+            account: newUsername,
+            password: newPassword,
+            wallet: [{
+              oid: oid,
+              currency: currency,
+              wallet_name: walletName,
+              current_address: currentAddress,
+              created_at: createdDate,
+              updated_at: updatedDate
+            }]
           });
+
+          //to save newWallet document into Wallet collection
+          newWallet.save(function(err) {
+            if (err) return console.error(err);
+            console.log("Succesfully saved in userDB");
+          });
+          /* redirect to "main screen"
+          when we redirect we "jump" to get request of route */
+          res.redirect('main_screen');
         });
-
-        // sending data to Rahakott
-        request.write(jsonData);
-        request.end();
-
-        /* redirect to "main screen"
-        when we redirect we "jump" to get request of route */
-        res.redirect('main_screen');
       } else res.status(401).end('Incorrect Username and/or Password!');
     }
   });
