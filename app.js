@@ -18,8 +18,8 @@ const QRCode = require('qrcode');
 //console.log(rahakottData());
 
 /* to connect URL and creating "userDB" if it's not exist
-(and preserve deprecation warnings) */
-// it is place where mongodb hosted locally
+(and preserve deprecation warnings)
+it is place where mongodb hosted locally */
 mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -45,8 +45,8 @@ const Wallet = mongoose.model("Wallet", userSchema);
 const app = express();
 
 /* Global variables */
-// let is sort of variable
-// recommended to use "let" instead of "var"
+/* "let" is sort of variable
+recommended to use "let" instead of "var" */
 let name;
 let publicAddress;
 
@@ -58,12 +58,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-/****************************** LOGIN SCREEN ******************************/
-// app.get("/")-what happens whet users enter to my homepage
+
+// app.get("/") - what happens whet users enter to my homepage
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
+/****************************** LOGIN (Homepage) ******************************/
 // "post request" is getting data back from our web page to server
 app.post("/login", function(req, res) {
 
@@ -112,13 +113,9 @@ app.post("/login", function(req, res) {
       //publicAddress  = rahakottData();
       name = account;
 
-      //publicAddress = newWalletData.addresses[0].address;
-
-      // redirect to "main screen"
       res.redirect('main_screen');
     } else res.status(401).end('Incorrect Username and/or Password!');
   });
-
 });
 
 /*************************** MAIN SCREEN **********************************/
@@ -138,7 +135,7 @@ app.get("/main_screen", function(req, res) {
   //res.redirect(req.originalUrl);
 });
 
-/************************** NEW USER SCREEN *****************************/
+/************************** CREATE WALLET (Homepage) *****************************/
 // app.get("/new_account", function(req, res) {
 //   res.sendFile(__dirname + "/new_account.html");
 // });
@@ -160,10 +157,11 @@ app.post("/new_account", function(req, res) {
       res.status(401).end('Incorrect Username and/or Password!');
     } else {
       if (newPassword === confirmNewPassword) {
+
         /*********************** CREATE NEW WALLET **************************/
         const data = {
           api_key: "219086bc0faedeb4cb40ca8adfadd9ff",
-          name: newUsername, // "+ currency +"- it is need to be changed (when we add another currency)
+          name: newUsername,
           currency: "BTC"
         };
         const jsonData = JSON.stringify(data);
@@ -185,9 +183,7 @@ app.post("/new_account", function(req, res) {
 
           // getting data from Rahakott
           response.on("data", function(data) {
-
-            // can be error type also
-            //console.log(JSON.parse(data));
+            //console.log(JSON.parse(data)); // can be error type also
 
             const newWalletData = JSON.parse(data);
 
@@ -198,14 +194,13 @@ app.post("/new_account", function(req, res) {
             const createdDate = newWalletData.created_at;
             const updatedDate = newWalletData.updated_at;
 
-
             name = newUsername;
             publicAddress = currentAddress;
 
             console.log(currency, oid, walletName);
 
             /***********************SET DATA TO DB*********************************/
-            // setting data to database
+
             const newWallet = new Wallet({
               account: newUsername,
               password: newPassword,
@@ -219,7 +214,7 @@ app.post("/new_account", function(req, res) {
               }]
             });
 
-            // to save newWallet document into Wallet collection inside
+            // to save newWallet document into Wallet collection
             newWallet.save(function(err) {
               if (err) return console.error(err);
               console.log("Succesfully saved in userDB");
@@ -231,8 +226,8 @@ app.post("/new_account", function(req, res) {
         request.write(jsonData);
         request.end();
 
-        // redirect to "main screen"
-        //when we redirect we "jump" to get request of route
+        /* redirect to "main screen"
+        when we redirect we "jump" to get request of route */
         res.redirect('main_screen');
       } else res.status(401).end('Incorrect Username and/or Password!');
     }
