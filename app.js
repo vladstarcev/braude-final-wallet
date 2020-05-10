@@ -14,7 +14,21 @@ const mongoose = require("mongoose");
 
 const QRCode = require('qrcode');
 
-//const rahakottData = require(__dirname + "/data.js");
+
+/* Dotenv is a module that loads environment
+variables from a .env file into process.env.  */
+require('dotenv').config();
+
+//const rahakottData = require(__dirname + "/getWalletBalance.js");
+//console.log(rahakottData());
+
+//const rahakottData = require(__dirname + "/addNewWallet.js");
+//console.log(rahakottData());
+
+ // const rahakottData = require(__dirname + "/renameWallet.js");
+ // console.log(rahakottData());
+
+//const rahakottData = require(__dirname + "/deleteWallet.js");
 //console.log(rahakottData());
 
 /* to connect URL and creating "userDB" if it's not exist
@@ -35,6 +49,8 @@ const userSchema = new mongoose.Schema({
     current_address: String,
     created_at: Date,
     updated_at: Date
+    //confirmed:
+    //unconfirmed:
   }]
 });
 
@@ -49,7 +65,7 @@ const app = express();
 recommended to use "let" instead of "var" */
 let name;
 let publicAddress;
-//var newWalletData;
+let currentOid;
 
 // for "EJS" - templates using
 app.set('view engine', 'ejs');
@@ -82,6 +98,7 @@ app.post("/login", function(req, res) {
       console.log(wallet);
       //console.log(wallet.wallet[0].oid);
       publicAddress = wallet.wallet[0].current_address;
+      //console.log(wallet.wallet.length);
       name = account;
 
       res.redirect('main_screen');
@@ -100,6 +117,7 @@ app.post("/new_account", function(req, res) {
   var newPassword = req.body.newPassword;
   var confirmNewPassword = req.body.confirmNewPassword;
   console.log(newUsername, newPassword, confirmNewPassword);
+  var walletName = newUsername + "-BTC";
 
   Wallet.findOne({
     account: newUsername
@@ -121,8 +139,8 @@ app.post("/new_account", function(req, res) {
             'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
           },
           body: JSON.stringify({
-            "api_key": "219086bc0faedeb4cb40ca8adfadd9ff",
-            "name": newUsername,
+            "api_key": process.env.API_KEY_RAHAKOTT,
+            "name": walletName ,
             "currency": "BTC"
           })
         };
@@ -139,7 +157,7 @@ app.post("/new_account", function(req, res) {
           const createdDate = newWalletData.created_at;
           const updatedDate = newWalletData.updated_at;
 
-          name = newUsername;
+          name = newUsername; // walletName
           publicAddress = currentAddress;
 
           console.log(currency, oid, walletName, publicAddress);
@@ -158,12 +176,12 @@ app.post("/new_account", function(req, res) {
               updated_at: updatedDate
             }]
           });
-
           //to save newWallet document into Wallet collection
           newWallet.save(function(err) {
             if (err) return console.error(err);
             console.log("Succesfully saved in userDB");
           });
+
           /* redirect to "main screen"
           when we redirect we "jump" to get request of route */
           res.redirect('main_screen');
