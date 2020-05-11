@@ -15,10 +15,11 @@ let priceBTCUSDT;
 let priceBTCEUR;
 let balanceUSD;
 let balanceEUR;
+let balanceILS;
 
 async function getData() {
 
-  /****************************** Get a Wallet Address List ******************************/
+  /****************************** Get a Wallet addresses list ******************************/
   // var options = {
   //   'method': 'POST',
   //   'url': 'https://rahakott.io/api/v1.1/addresses',
@@ -49,6 +50,20 @@ async function getData() {
   console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
 
   var options = {
+    'method': 'GET',
+    'url': 'https://api.exchangeratesapi.io/latest?base=USD',
+    'headers': {
+      'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+    }
+  };
+
+  await request(options, function(error, response) {
+    if (error) throw new Error(error);
+    let exchangesRatesData = JSON.parse(response.body);
+    console.log(balanceILS = exchangesRatesData.rates.ILS);
+  });
+
+  var options = {
     'method': 'POST',
     'url': 'https://rahakott.io/api/v1.1/wallets/balance',
     'headers': {
@@ -62,7 +77,7 @@ async function getData() {
     })
   };
 
-  request(options, function(error, response) {
+  await request(options, function(error, response) {
     if (error) throw new Error(error);
     console.log(response.body);
     const walletData = JSON.parse(response.body);
@@ -74,8 +89,27 @@ async function getData() {
     balanceEUR = walletBalance * priceBTCEUR;
     console.log(balanceUSD.toFixed(2));
     console.log(balanceEUR.toFixed(2));
+    balanceILS = balanceILS * balanceUSD;
+    console.log(balanceILS.toFixed(2));
 
   });
+
+
+
+  var options = {
+    'method': 'GET',
+    'url': 'https://rest.coinapi.io/v1/exchangerate/BTC/NIS',
+    'headers': {
+      'X-CoinAPI-Key': process.env.API_KEY_COINAPI
+    }
+  };
+  await request(options, function(error, response) {
+    if (error) throw new Error(error);
+    let data = JSON.parse(response.body);
+    console.log((data.rate * walletBalance).toFixed(2));
+  });
+
+
 
   // binance.prices('BTCUSDT', (error, ticker) => {
   //   console.log("Price of BTC: ", ticker.BTCUSDT);
