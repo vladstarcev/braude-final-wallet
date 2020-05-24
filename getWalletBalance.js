@@ -9,15 +9,16 @@ const binance = new Binance().options({
 
 
 module.exports = getData;
+//console.log(module);
 
-let walletBalance;
-let priceBTCUSDT;
-let priceBTCEUR;
-let balanceUSD;
-let balanceEUR;
-let balanceILS;
+function getData() {
 
-async function getData() {
+  let walletBalance;
+  let priceBTCUSDT;
+  let priceBTCEUR;
+  let balanceUSD;
+  let balanceEUR;
+  let balanceILS;
 
   /****************************** Get a Wallet addresses list ******************************/
   // var options = {
@@ -45,23 +46,23 @@ async function getData() {
   //   console.log(newWalletData.addresses[0].current);
   //   if (newWalletData.addresses[0].current === true) {
 
-  let ticker = await binance.prices();
-  console.log(`Price of BTC: ${priceBTCEUR = ticker.BTCEUR}`);
-  console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
+  // let ticker = await binance.prices();
+  // console.log(`Price of BTC: ${priceBTCEUR = ticker.BTCEUR}`);
+  // console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
 
-  var options = {
-    'method': 'GET',
-    'url': 'https://api.exchangeratesapi.io/latest?base=USD',
-    'headers': {
-      'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
-    }
-  };
-
-  await request(options, function(error, response) {
-    if (error) throw new Error(error);
-    let exchangesRatesData = JSON.parse(response.body);
-    console.log(balanceILS = exchangesRatesData.rates.ILS);
-  });
+  // var options = {
+  //   'method': 'GET',
+  //   'url': 'https://api.exchangeratesapi.io/latest?base=USD',
+  //   'headers': {
+  //     'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+  //   }
+  // };
+  //
+  // request(options, function(error, response) {
+  //   if (error) throw new Error(error);
+  //   let exchangesRatesData = JSON.parse(response.body);
+  //   console.log(balanceILS = exchangesRatesData.rates.ILS);
+  // });
 
   var options = {
     'method': 'POST',
@@ -77,37 +78,39 @@ async function getData() {
     })
   };
 
-  await request(options, function(error, response) {
+  request(options, async function(error, response) {
     if (error) throw new Error(error);
     console.log(response.body);
     const walletData = JSON.parse(response.body);
     //console.log(walletData.confirmed);
-    walletBalance = walletData.confirmed;
+    // walletBalance = walletData.confirmed;
     //console.log(walletData.confirmed);
-    console.log(walletBalance = walletData.confirmed / 100000000);
-    balanceUSD = walletBalance * priceBTCUSDT;
-    balanceEUR = walletBalance * priceBTCEUR;
-    console.log(balanceUSD.toFixed(2));
-    console.log(balanceEUR.toFixed(2));
-    balanceILS = balanceILS * balanceUSD;
-    console.log(balanceILS.toFixed(2));
-
+    walletBalance = walletData.confirmed / 100000000;
+    console.log(walletBalance);
+    // balanceUSD = walletBalance * priceBTCUSDT;
+    // balanceEUR = walletBalance * priceBTCEUR;
+    // console.log(balanceUSD.toFixed(2));
+    // console.log(balanceEUR.toFixed(2));
+    // balanceILS = balanceILS * balanceUSD;
+    // console.log(balanceILS.toFixed(2));
+    return walletBalance;
   });
 
 
 
-  var options = {
-    'method': 'GET',
-    'url': 'https://rest.coinapi.io/v1/exchangerate/BTC/NIS',
-    'headers': {
-      'X-CoinAPI-Key': process.env.API_KEY_COINAPI
-    }
-  };
-  await request(options, function(error, response) {
-    if (error) throw new Error(error);
-    let data = JSON.parse(response.body);
-    console.log((data.rate * walletBalance).toFixed(2));
-  });
+  // var options = {
+  //   'method': 'GET',
+  //   'url': 'https://rest.coinapi.io/v1/exchangerate/BTC/NIS',
+  //   'headers': {
+  //     'X-CoinAPI-Key': process.env.API_KEY_COINAPI
+  //   }
+  // };
+  //
+  // request(options, function(error, response) {
+  //   if (error) throw new Error(error);
+  //   let data = JSON.parse(response.body);
+  //   console.log((data.rate * walletBalance).toFixed(2));
+  // });
 
 
 
@@ -118,7 +121,5 @@ async function getData() {
   //}
   //return JSON.stringify(newWalletData);
   //});
-
-  /************************************************************************/
-  return balanceUSD;
+  // return walletBalance;
 }

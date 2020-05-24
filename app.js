@@ -26,8 +26,8 @@ const binance = new Binance().options({
   APISECRET: process.env.API_SECRET_BINANCE
 });
 
-//const rahakottData = require(__dirname + "/getWalletBalance.js");
-//console.log(rahakottData());
+const rahakottData = require(__dirname + "/getWalletBalance.js");
+console.log(rahakottData());
 
 //const rahakottData = require(__dirname + "/addNewWallet.js");
 //console.log(rahakottData());
