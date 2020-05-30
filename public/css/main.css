@@ -24,3 +24,15 @@ body {
 .crypto-address {
   font-size: 20px;
 }
+
+.warning-box {
+  border: 1px solid grey;
+  width: 60%;
+  margin: auto;
+  border-radius: 10px;
+  background-color: #f5a7a7;
+}
+
+.warning {
+  color: red;
+}
