@@ -23,6 +23,10 @@ app.get('/send', function(req,res){
   res.render('send');
 });
 
+app.get('/exchange', function(req,res){
+  res.render('exchange');
+});
+
 app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Main</title>
+  <title>Exchange</title>
   <script src="https://kit.fontawesome.com/d0156047d2.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link rel="stylesheet" href="css/main.css">
@@ -18,9 +18,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link active" href="#">Home</a>
+        <a class="nav-item nav-link" href="/">Home</a>
         <a class="nav-item nav-link" href="send">Send</a>
-        <a class="nav-item nav-link" href="exchange">Exchange</a>
+        <a class="nav-item nav-link active" href="exchange">Exchange</a>
         <a class="nav-item nav-link" href="#">Log out</a>
       </div>
     </div>
@@ -29,14 +29,9 @@
   <br>
   <br>
 
-
   <div class="row">
     <div class="col">
-      <h1>Welcome back, <span class="crypto">Username</span>!</h1>
-      <br>
-      <h2>Currently on: <span class="crypto">Bitcoin</span> wallet</h2>
-      <br>
-      <button type="button" class="btn btn-outline-primary btn-lg"><i class="fab fa-bitcoin"></i> Change wallet</button>
+      <h1>Exchange <span class="crypto">Crypto</span></h1>
     </div>
   </div>
 
@@ -44,32 +39,19 @@
   <hr>
   <br>
 
-  <div class="row">
-    <div class="col">
-      <h1>Your balance:</h1>
-      <h2><span class="crypto-balance crypto">0</span> <span class="crypto-name">BTC</span></h2>
-      <br>
-      <h3 class="forex">0 USD | 0 EUR</h3>
+  <form action="send" method="post">
+    <div class="row">
+      <div class="col">
+        <h3>From <span class="crypto">BTC</span> to
+          <select class="form-control" name="">
+            <option>BTC</option>
+            <option>LTC</option>
+          </select>
+        </h3>
+      </div>
     </div>
-  </div>
 
-  <br>
-  <hr>
-  <br>
-
-  <div class="row">
-    <div class="col-sm-4">
-      <img src="<%= qrcode %>" alt="" style="width:250px; height:250px;">
-    </div>
-    <div class="col-sm-8">
-      <h2>Your Address:</h2>
-      <br>
-      <h3 class="crypto-address crypto">3MaC5uA6ru4XA3S1stficMK5zbVTSgyH5o</h3>
-      <br>
-      <a type="button" class="btn btn-outline-primary btn-lg" href="send"><i class="fas fa-paper-plane"></i> Send</a>
-      <a type="button" class="btn btn-outline-primary btn-lg" href="exchange"><i class="fas fa-exchange-alt"></i> Exchange</a>
-    </div>
-  </div>
+  </form>
 
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
