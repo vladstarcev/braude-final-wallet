@@ -11,7 +11,7 @@ const binance = new Binance().options({
 module.exports = getData;
 //console.log(module);
 
-function getData() {
+async function getData() {
 
   let walletBalance;
   let priceBTCUSDT;
@@ -19,6 +19,8 @@ function getData() {
   let balanceUSD;
   let balanceEUR;
   let balanceILS;
+
+  let currentCurrency = "BTC";
 
   /****************************** Get a Wallet addresses list ******************************/
   // var options = {
@@ -38,7 +40,7 @@ function getData() {
   //
   // };
   //
-  // request(options, function(error, response) {
+  //request(options, function(error, response) {
   //   if (error) throw new Error(error);
   //   console.log(response.body);
   //   const newWalletData = JSON.parse(response.body);
@@ -46,9 +48,9 @@ function getData() {
   //   console.log(newWalletData.addresses[0].current);
   //   if (newWalletData.addresses[0].current === true) {
 
-  // let ticker = await binance.prices();
-  // console.log(`Price of BTC: ${priceBTCEUR = ticker.BTCEUR}`);
-  // console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
+   let ticker = await binance.prices();
+   console.log(`Price of BTC: ${priceBTCEUR = ticker.BTCEUR}`);
+   console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
 
   // var options = {
   //   'method': 'GET',
@@ -62,6 +64,11 @@ function getData() {
   //   if (error) throw new Error(error);
   //   let exchangesRatesData = JSON.parse(response.body);
   //   console.log(balanceILS = exchangesRatesData.rates.ILS);
+  // });
+
+  // binance.prices('BTCEUR', (error, ticker) => {
+  //  console.log("Price of BTC: ", priceBTCEUR = ticker.BTCEUR);
+  //  console.log(priceBTCEUR);
   // });
 
   var options = {
@@ -87,10 +94,10 @@ function getData() {
     //console.log(walletData.confirmed);
     walletBalance = walletData.confirmed / 100000000;
     console.log(walletBalance);
-    // balanceUSD = walletBalance * priceBTCUSDT;
-    // balanceEUR = walletBalance * priceBTCEUR;
-    // console.log(balanceUSD.toFixed(2));
-    // console.log(balanceEUR.toFixed(2));
+    balanceUSD = walletBalance * priceBTCUSDT;
+    balanceEUR = walletBalance * priceBTCEUR;
+    console.log(balanceUSD.toFixed(2));
+    console.log(balanceEUR.toFixed(2));
     // balanceILS = balanceILS * balanceUSD;
     // console.log(balanceILS.toFixed(2));
     return walletBalance;
@@ -110,12 +117,6 @@ function getData() {
   //   if (error) throw new Error(error);
   //   let data = JSON.parse(response.body);
   //   console.log((data.rate * walletBalance).toFixed(2));
-  // });
-
-
-
-  // binance.prices('BTCUSDT', (error, ticker) => {
-  //   console.log("Price of BTC: ", ticker.BTCUSDT);
   // });
 
   //}

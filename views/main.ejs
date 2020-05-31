@@ -32,9 +32,9 @@
 
   <div class="row">
     <div class="col">
-      <h1>Welcome back, <span class="crypto">Username</span>!</h1>
+      <h1>Welcome back, <span class="crypto"> <%= accountName %> </span>!</h1>
       <br>
-      <h2>Currently on: <span class="crypto">Bitcoin</span> wallet</h2>
+      <h2>Currently on: <span class="crypto"> <%= fullCurrCurrencyName %> </span> wallet</h2>
       <br>
       <button type="button" class="btn btn-outline-primary btn-lg"><i class="fab fa-bitcoin"></i> Change wallet</button>
     </div>
@@ -47,9 +47,9 @@
   <div class="row">
     <div class="col">
       <h1>Your balance:</h1>
-      <h2><span class="crypto-balance crypto">0</span> <span class="crypto-name">BTC</span></h2>
+      <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"> <%= currentCurrency %> </span></h2>
       <br>
-      <h3 class="forex">0 USD | 0 EUR</h3>
+      <h3 class="forex"><%= balanceUSD %> USD | <%= balanceEUR %> EUR</h3>
     </div>
   </div>
 
@@ -64,7 +64,7 @@
     <div class="col-sm-8">
       <h2>Your Address:</h2>
       <br>
-      <h3 class="crypto-address crypto">3MaC5uA6ru4XA3S1stficMK5zbVTSgyH5o</h3>
+      <h3 class="crypto-address crypto"> <%= publicAddress %> </h3>
       <br>
       <button type="button" class="btn btn-outline-primary btn-lg"><i class="fas fa-paper-plane"></i> Send</button>
       <button type="button" class="btn btn-outline-primary btn-lg"><i class="fas fa-exchange-alt"></i> Exchange</button>
