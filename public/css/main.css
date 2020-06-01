@@ -26,11 +26,11 @@ body {
 }
 
 .warning-box {
-  border: 1px solid grey;
-  width: 60%;
-  margin: auto;
-  border-radius: 10px;
   background-color: #ffe6e6;  /*ffb3b3*/
+  border: 1px solid grey;
+  border-radius: 10px;
+  margin: auto;
+  width: 60%;
 }
 
 .warning {

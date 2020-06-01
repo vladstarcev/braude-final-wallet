@@ -47,59 +47,61 @@
   <hr>
   <br>
 
-  <!-- <form action="send" method="post"> -->
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Recipient</h3>
+  <form action="/send" class="send-form" method="POST">
+    <div class="row">
+      <div class="col-sm-4">
+        <h3>Recipient</h3>
+      </div>
+      <div class="col-sm-6">
+        <input class="form-control" type="text" name="recipientAddress" value="<%= recipientAddress %>" autocomplete="off" placeholder="Enter recipient's address" autocomplete="off">
+      </div>
     </div>
-    <div class="col-sm-6">
-      <input class="form-control" type="text" name="address" autocomplete="off" required="required" placeholder="Enter recipient's address" autocomplete="off">
-    </div>
-  </div>
-  <br>
-  <form action="/send_calc" class="send_calc-form" method="POST">
+    <br>
+    <!-- <form action="/send_calc" class="send_calc-form" method="POST"> -->
     <div class="row">
       <div class="col-sm-4">
         <h3>Calculator</h3>
       </div>
       <div class="col-sm-6">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="sendUSDamount" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" required="required" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <input type="text" class="form-control" name="sendUSDamount" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
           <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="submit">Calculate</button>
+            <button class="btn btn-outline-primary" name="Calculate" value="Clicked" type="submit">Calculate</button>
           </div>
         </div>
       </div>
-  </form>
-  </div>
-  <br>
-  <form action="/send_max" class="send_max-form" method="POST">
+      <!-- </form> -->
+    </div>
+    <br>
+    <!-- <form action="/send_max" class="send_max-form" method="POST"> -->
     <div class="row">
       <div class="col-sm-4">
         <h3>Amount</h3>
       </div>
       <div class="col-sm-6">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" name="sendCryptoAmount" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off" required="required" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <input type="text" class="form-control" name="sendCryptoAmount" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
           <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="submit">Maximum</button>
+            <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
           </div>
         </div>
       </div>
+      <!-- </form> -->
+    </div>
+    <br>
+    <hr>
+    <br>
+    <!-- <form action="/send" class="send-form" method="POST"> -->
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Available for spending: <span class="crypto"> <%= walletBalance %> </span> <%= currentCurrency %> </h3>
+      </div>
+      <div class="col-sm-6">
+        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit">Send</button>
+      </div>
+    </div>
+    <!-- </form> -->
   </form>
-  </div>
-  <br>
-  <hr>
-  <br>
-  <div class="row">
-    <div class="col-sm-6">
-      <h3>Available for spending: <span class="crypto"> <%= walletBalance %> </span> <%= currentCurrency %> </h3>
-    </div>
-    <div class="col-sm-6">
-      <input class="btn btn-outline-primary btn-lg" style="width: 10rem" type="submit" value="Send">
-    </div>
-  </div>
-  <!-- <form> -->
 
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

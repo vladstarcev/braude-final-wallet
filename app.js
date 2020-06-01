@@ -75,6 +75,7 @@ let publicAddress;
 let currentOid;
 let currentCurrency;
 let walletBalance;
+const minSendingSum = 0.000001;
 // let balanceUSD = 0;
 // let balanceEUR = 0;
 // let balanceILS;
@@ -323,8 +324,10 @@ app.get("/main", async function(req, res) {
 app.get("/send", function(req, res) {
   let sendUSDamount = null;
   let sendCryptoAmount = null;
-  console.log("I'am here");
+  let recipientAddress = null;
+  console.log("I'am in Get func. of SEND");
   res.render('send', {
+    recipientAddress: recipientAddress,
     sendUSDamount: sendUSDamount,
     sendCryptoAmount: sendCryptoAmount,
     walletBalance: walletBalance,
@@ -332,61 +335,106 @@ app.get("/send", function(req, res) {
   });
 });
 
-/************************** "Send" button was pressed *************************/
+
 app.post("/send", async function(req, res) {
-  console.log("Hey there");
-});
 
+  /********************* "Calculate" button was pressed ***********************/
+  if (req.body.Calculate == "Clicked") {
 
-/************************** "Calculate" button was pressed *************************/
+    let currCurrencyUSDprice;
+    let sendCryptoAmount = req.body.sendCryptoAmount;
+    let recipientAddress = req.body.recipientAddress;
+    //console.log(recipientAddress);
+    let sendUSDamount = req.body.sendUSDamount;
+    //console.log(sendUSDamount);
 
-app.post("/send_calc", async function(req, res) {
+    switch (currentCurrency) {
+      case "BTC":
+        if (sendUSDamount) {
+          let ticker = await binance.prices();
+          console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
+          sendCryptoAmount = (sendUSDamount / currCurrencyUSDprice).toFixed(8);
+          console.log(sendCryptoAmount);
+        }
+        break;
+      case "LTC":
+        // code block
+        break;
+      default:
+        // code block
+        console.log("Error!Currency is not equal to any of the supported currencies.");
+    }
 
-  let sendCryptoAmount = 0;
-  let currCurrencyUSDprice;
-  var sendUSDamount = req.body.sendUSDamount;
-  console.log(sendUSDamount);
-
-  switch (currentCurrency) {
-    case "BTC":
-      if (sendUSDamount) {
-        let ticker = await binance.prices();
-        console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
-        sendCryptoAmount = (sendUSDamount / currCurrencyUSDprice).toFixed(8);
-        console.log(sendCryptoAmount);
-      } else
-        sendCryptoAmount = 0;
-      break;
-    case "LTC":
-      // code block
-      break;
-    default:
-      // code block
-      console.log(Error);
+    res.render('send', {
+      recipientAddress: recipientAddress,
+      sendUSDamount: sendUSDamount,
+      sendCryptoAmount: sendCryptoAmount,
+      walletBalance: walletBalance,
+      currentCurrency: currentCurrency
+    });
   }
 
-  res.render('send', {
-    sendUSDamount: sendUSDamount,
-    sendCryptoAmount: sendCryptoAmount,
-    walletBalance: walletBalance,
-    currentCurrency: currentCurrency
-  });
-});
+  /*********************** "Maximume" button was pressed ************************/
+  if (req.body.Maximum == "Clicked") {
 
-/************************** "Maximume" button was pressed *************************/
+    let currCurrencyUSDprice;
+    let sendUSDamount = null;
+    let sendCryptoAmount = walletBalance;
+    let recipientAddress = req.body.recipientAddress;
 
-app.post("/send_max", async function(req, res) {
+    res.render('send', {
+      recipientAddress: recipientAddress,
+      sendUSDamount: sendUSDamount,
+      sendCryptoAmount: sendCryptoAmount,
+      walletBalance: walletBalance,
+      currentCurrency: currentCurrency
+    });
+  }
 
-  let currCurrencyUSDprice;
-  let sendUSDamount = null;
-  let sendCryptoAmount = walletBalance;
+  /************************** "Send" button was pressed *************************/
 
-  res.render('send', {
-    sendUSDamount: sendUSDamount,
-    sendCryptoAmount: sendCryptoAmount,
-    walletBalance: walletBalance,
-    currentCurrency: currentCurrency
-  });
+  if (req.body.Send == "Clicked") {
+    let recipientAddress = req.body.recipientAddress;
+    //console.log(recipientAddress);
+    let sendCryptoAmount = req.body.sendCryptoAmount;
+    //console.log(sendCryptoAmount);
+    console.log("I'am in Post func. of SEND");
+
+    if ((sendCryptoAmount > minSendingSum && sendCryptoAmount <= walletBalance) && recipientAddress) {
+      console.log(sendCryptoAmount, recipientAddress);
+      console.log("Wallet of sender is " + currentOid);
+
+      // var options = {
+      //   'method': 'POST',
+      //   'url': 'https://rahakott.io/api/v1.1/send',
+      //   'headers': {
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json',
+      //     'Cookie': 'Cookie_1=value; __cfduid=d1e52c0daff45c29a2f2186fdd35d81e81590309503'
+      //   },
+      //   body: JSON.stringify({
+      //     "api_key": process.env.API_KEY_RAHAKOTT,
+      //     "wallet": currentOid,
+      //     "recipient": recipientAddress,
+      //     "amount": sendCryptoAmount,
+      //     "external_only": true,
+      //     "subtract_fees": true
+      //   })
+      //
+      // };
+      // request(options, function(error, response) {
+      //   if (error) throw new Error(error);
+      //   console.log(response.body);
+      //   const sendingData = JSON.parse(response.body);
+      //   const requestNumber = sendingData.request;
+      //   console.log(requestNumber);
+      // });
+
+    } else{
+        console.log("Error! Recipient address or/and sending amount not correct.");
+    }
+
+  }
 });
 
 //mongoose.connection.close();
