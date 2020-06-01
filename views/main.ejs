@@ -1,87 +1,44 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+<%- include("header") -%>
 
-<head>
-  <meta charset="utf-8">
-  <title>Main</title>
-  <script src="https://kit.fontawesome.com/d0156047d2.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="icon" href="images/wallet_icon.ico">
-  <title>Main</title>
-</head>
-
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
-      <span class="crypto">Crypto</span>Wallet</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link active" href="#">Home</a>
-
-        <form action="/send" class="send-form" method="POST">
-          <a class="nav-item nav-link" href="send">Send</a>
-        </form>
-        <a class="nav-item nav-link" href="exchange">Exchange</a>
-        <form action="/" class="create-form" method="POST">
-          <a class="nav-item nav-link" href="/">Log out</a>
-        </form>
-      </div>
-    </div>
-  </nav>
-
-  <br>
-  <br>
-
-
-  <div class="row">
-    <div class="col">
-      <h1>Welcome back, <span class="crypto"> <%= accountName %> </span>!</h1>
-      <br>
-      <h2>Currently on: <span class="crypto"> <%= fullCurrCurrencyName %> </span> wallet</h2>
-      <br>
-      <button type="button" class="btn btn-outline-primary btn-lg"><i class="fab fa-bitcoin"></i> Change wallet</button>
-    </div>
+<div class="row">
+  <div class="col">
+    <h1>Welcome back, <span class="crypto"> <%= accountName %> </span>!</h1>
+    <br>
+    <h2>Currently on: <span class="crypto"> <%= fullCurrCurrencyName %> </span> wallet</h2>
+    <br>
+    <button type="button" class="btn btn-outline-primary btn-lg"><i class="fab fa-bitcoin"></i> Change wallet</button>
   </div>
+</div>
 
-  <br>
-  <hr>
-  <br>
+<br>
+<hr>
+<br>
 
-  <div class="row">
-    <div class="col">
-      <h1>Your balance:</h1>
-      <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"> <%= currentCurrency %> </span></h2>
-      <br>
-      <h3 class="forex"><%= balanceUSD %> USD | <%= balanceEUR %> EUR</h3>
-    </div>
+<div class="row">
+  <div class="col">
+    <h1>Your balance:</h1>
+    <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"> <%= currentCurrency %> </span></h2>
+    <br>
+    <h3 class="forex"><%= balanceUSD %> USD | <%= balanceEUR %> EUR</h3>
   </div>
+</div>
 
-  <br>
-  <hr>
-  <br>
+<br>
+<hr>
+<br>
 
-  <div class="row">
-    <div class="col-sm-4">
-      <img src="<%= qrcode %>" alt="" style="width:250px; height:250px;">
-    </div>
-    <div class="col-sm-8">
-      <h2>Your Address:</h2>
-      <br>
-      <h3 class="crypto-address crypto"> <%= publicAddress %> </h3>
-      <br>
-      <a type="button" class="btn btn-outline-primary btn-lg" href="/send"><i class="fas fa-paper-plane"></i> Send</a>
-      <a type="button" class="btn btn-outline-primary btn-lg" href="exchange"><i class="fas fa-exchange-alt"></i> Exchange</a>
-    </div>
+<div class="row">
+  <div class="col-sm-4">
+    <img src="<%= qrcode %>" alt="" style="width:250px; height:250px;">
   </div>
+  <div class="col-sm-8">
+    <h2>Your Address:</h2>
+    <br>
+    <h3 class="crypto-address crypto"> <%= publicAddress %> </h3>
+    <br>
+    <a type="button" class="btn btn-outline-primary btn-lg" href="/send"><i class="fas fa-paper-plane"></i> Send</a>
+    <a type="button" class="btn btn-outline-primary btn-lg" href="/exchange"><i class="fas fa-exchange-alt"></i> Exchange</a>
+  </div>
+</div>
 
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-</body>
-
-</html>
+<%- include("footer") -%>

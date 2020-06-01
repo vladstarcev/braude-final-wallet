@@ -48,10 +48,10 @@ async function getData() {
   //   console.log(newWalletData.addresses[0].current);
   //   if (newWalletData.addresses[0].current === true) {
 
-   let ticker = await binance.prices();
-   console.log(`Price of BTC: ${priceBTCEUR = ticker.BTCEUR}`);
-   console.log(`Price of BTC: ${priceBTCUSDT = ticker.BTCUSDT}`);
-
+  //  let ticker = await binance.prices();
+  //  console.log(`Price of LTCEUR: ${priceBTCEUR = ticker.LTCEUR}`);
+  //  console.log(`Price of LTCUSD: ${priceBTCUSDT = ticker.LTCUSDT}`);
+  //
   // var options = {
   //   'method': 'GET',
   //   'url': 'https://api.exchangeratesapi.io/latest?base=USD',
@@ -63,7 +63,7 @@ async function getData() {
   // request(options, function(error, response) {
   //   if (error) throw new Error(error);
   //   let exchangesRatesData = JSON.parse(response.body);
-  //   console.log(balanceILS = exchangesRatesData.rates.ILS);
+  //   console.log(balanceILS = exchangesRatesData.rates.EUR);
   // });
 
   // binance.prices('BTCEUR', (error, ticker) => {
@@ -105,19 +105,20 @@ async function getData() {
 
 
 
-  // var options = {
-  //   'method': 'GET',
-  //   'url': 'https://rest.coinapi.io/v1/exchangerate/BTC/NIS',
-  //   'headers': {
-  //     'X-CoinAPI-Key': process.env.API_KEY_COINAPI
-  //   }
-  // };
-  //
-  // request(options, function(error, response) {
-  //   if (error) throw new Error(error);
-  //   let data = JSON.parse(response.body);
-  //   console.log((data.rate * walletBalance).toFixed(2));
-  // });
+  var options = {
+    'method': 'GET',
+    'url': 'https://rest.coinapi.io/v1/exchangerate/LTC/EUR',
+    'headers': {
+      'X-CoinAPI-Key': process.env.API_KEY_COINAPI
+    }
+  };
+
+  request(options, function(error, response) {
+    if (error) throw new Error(error);
+    let data = JSON.parse(response.body);
+    console.log(response.body);
+    // console.log((data.rate * walletBalance).toFixed(2));
+  });
 
   //}
   //return JSON.stringify(newWalletData);

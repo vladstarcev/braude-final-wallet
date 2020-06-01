@@ -273,6 +273,7 @@ app.get("/main", async function(req, res) {
   let currCurrencyEURprice;
   let balanceUSD = 0;
   let balanceEUR = 0;
+  //walletBalance = 10; // variable for testing
   //let balanceILS;
 
   /* switch to checking the current currency for sending
@@ -293,12 +294,38 @@ app.get("/main", async function(req, res) {
       break;
     case "LTC":
       fullCurrCurrencyName = "Litecoin";
-      //console.log(fullCurrCurrencyName);
+
+      /* API for getting exchange rate of EUR for LTC EUR balance
+      (binance do not support LTCEUR exchange rate)*/
+      if (walletBalance) {
+        var options = {
+          'method': 'GET',
+          'url': 'https://api.exchangeratesapi.io/latest?base=USD',
+          'headers': {
+            'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+          }
+        };
+        await request(options, function(error, response) {
+          if (error) throw new Error(error);
+          let exchangesRatesData = JSON.parse(response.body);
+          console.log(balanceEUR = exchangesRatesData.rates.EUR);
+        });
+
+        /* Getting LTCUSD exchange rate from binance */
+        let ticker = await binance.prices();
+        console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
+        balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+
+        /* Getting LTCEUR exchange by multiply LTCUSD exchange rate from binance
+        and exchange rate of EUR */
+        balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
+        console.log(balanceEUR);
+      }
       break;
     default:
       fullCurrCurrencyName = "Oops"
       console.log(fullCurrCurrencyName);
-      console.log(Error);
+      console.log("Error! Currency is not equal to any of the supported currencies.(MAIN)");
   }
 
   QRCode.toDataURL(JSON.stringify(publicAddress), {
@@ -358,11 +385,16 @@ app.post("/send", async function(req, res) {
         }
         break;
       case "LTC":
-        // code block
+        if (sendUSDamount) {
+          let ticker = await binance.prices();
+          console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
+          sendCryptoAmount = (sendUSDamount / currCurrencyUSDprice).toFixed(8);
+          console.log(sendCryptoAmount);
+        }
         break;
       default:
         // code block
-        console.log("Error!Currency is not equal to any of the supported currencies.");
+        console.log("Error! Currency is not equal to any of the supported currencies.(SEND)");
     }
 
     res.render('send', {
@@ -430,11 +462,15 @@ app.post("/send", async function(req, res) {
       //   console.log(requestNumber);
       // });
 
-    } else{
-        console.log("Error! Recipient address or/and sending amount not correct.");
+    } else {
+      console.log("Error! Recipient address or/and sending amount not correct.");
     }
 
   }
+});
+
+app.get("/exchange", function(req, res) {
+  res.render('exchange', {});
 });
 
 //mongoose.connection.close();
