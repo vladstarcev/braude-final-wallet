@@ -91,6 +91,7 @@ app.use(bodyParser.urlencoded({
 // app.get("/") - what happens whet users enter to my homepage
 app.get("/", function(req, res) {
   walletBalance = 0;
+  //console.log("Hey, I'am here");
   res.sendFile(__dirname + "/index.html");
 });
 
@@ -281,8 +282,8 @@ app.get("/main", async function(req, res) {
       //console.log(fullCurrCurrencyName);
       if (walletBalance) {
         let ticker = await binance.prices();
-        console.log(`Price of BTC: ${currCurrencyUSDprice = ticker.BTCEUR}`);
-        console.log(`Price of BTC: ${currCurrencyEURprice = ticker.BTCUSDT}`);
+        console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
+        console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
         balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
         balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
         //console.log(balanceUSD.toFixed(2));
@@ -315,7 +316,77 @@ app.get("/main", async function(req, res) {
       publicAddress: publicAddress
     });
   });
+});
 
+/************************** SEND SCREEN *************************/
+
+app.get("/send", function(req, res) {
+  let sendUSDamount = null;
+  let sendCryptoAmount = null;
+  console.log("I'am here");
+  res.render('send', {
+    sendUSDamount: sendUSDamount,
+    sendCryptoAmount: sendCryptoAmount,
+    walletBalance: walletBalance,
+    currentCurrency: currentCurrency
+  });
+});
+
+/************************** "Send" button was pressed *************************/
+app.post("/send", async function(req, res) {
+  console.log("Hey there");
+});
+
+
+/************************** "Calculate" button was pressed *************************/
+
+app.post("/send_calc", async function(req, res) {
+
+  let sendCryptoAmount = 0;
+  let currCurrencyUSDprice;
+  var sendUSDamount = req.body.sendUSDamount;
+  console.log(sendUSDamount);
+
+  switch (currentCurrency) {
+    case "BTC":
+      if (sendUSDamount) {
+        let ticker = await binance.prices();
+        console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
+        sendCryptoAmount = (sendUSDamount / currCurrencyUSDprice).toFixed(8);
+        console.log(sendCryptoAmount);
+      } else
+        sendCryptoAmount = 0;
+      break;
+    case "LTC":
+      // code block
+      break;
+    default:
+      // code block
+      console.log(Error);
+  }
+
+  res.render('send', {
+    sendUSDamount: sendUSDamount,
+    sendCryptoAmount: sendCryptoAmount,
+    walletBalance: walletBalance,
+    currentCurrency: currentCurrency
+  });
+});
+
+/************************** "Maximume" button was pressed *************************/
+
+app.post("/send_max", async function(req, res) {
+
+  let currCurrencyUSDprice;
+  let sendUSDamount = null;
+  let sendCryptoAmount = walletBalance;
+
+  res.render('send', {
+    sendUSDamount: sendUSDamount,
+    sendCryptoAmount: sendCryptoAmount,
+    walletBalance: walletBalance,
+    currentCurrency: currentCurrency
+  });
 });
 
 //mongoose.connection.close();

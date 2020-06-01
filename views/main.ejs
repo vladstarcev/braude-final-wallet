@@ -7,6 +7,8 @@
   <script src="https://kit.fontawesome.com/d0156047d2.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="images/wallet_icon.ico">
+  <title>Main</title>
 </head>
 
 <body>
@@ -19,9 +21,14 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link active" href="#">Home</a>
-        <a class="nav-item nav-link" href="send">Send</a>
+
+        <form action="/send" class="send-form" method="POST">
+          <a class="nav-item nav-link" href="send">Send</a>
+        </form>
         <a class="nav-item nav-link" href="exchange">Exchange</a>
-        <a class="nav-item nav-link" href="#">Log out</a>
+        <form action="/" class="create-form" method="POST">
+          <a class="nav-item nav-link" href="/">Log out</a>
+        </form>
       </div>
     </div>
   </nav>
@@ -66,7 +73,7 @@
       <br>
       <h3 class="crypto-address crypto"> <%= publicAddress %> </h3>
       <br>
-      <a type="button" class="btn btn-outline-primary btn-lg" href="send"><i class="fas fa-paper-plane"></i> Send</a>
+      <a type="button" class="btn btn-outline-primary btn-lg" href="/send"><i class="fas fa-paper-plane"></i> Send</a>
       <a type="button" class="btn btn-outline-primary btn-lg" href="exchange"><i class="fas fa-exchange-alt"></i> Exchange</a>
     </div>
   </div>
