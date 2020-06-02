@@ -85,20 +85,22 @@ function getData() {
   // });
 
   const oid = "3wertfd"; // newWalletData.oid;
-  const currency = "LTC"; // newWalletData.currency;
-  const walletName = userName; // newWalletData.name;
+  const currency = "BTC"; // newWalletData.currency;
+  const walletName = "test31"; // newWalletData.name;
   const currentAddress = "12weedthhjhgjg"; // newWalletData.current_address;
   const createdDate = "2020-05-06T08:22:40.000Z"; // newWalletData.created_at;
   const updatedDate = "2020-05-06T08:22:40.000Z"; // newWalletData.updated_at;
+  const walName = walletName + "-BTC";
+  console.log(walName);
 
   Wallet.findOneAndUpdate({
-    account: userName
+    account: "test3"
   }, {
     $push: {
       "wallet": {
         oid: oid,
         currency: currency,
-        wallet_name: walletName,
+        wallet_name: walName,
         current_address: currentAddress,
         created_at: createdDate,
         updated_at: updatedDate

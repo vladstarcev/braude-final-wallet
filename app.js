@@ -29,8 +29,8 @@ const binance = new Binance().options({
 // const rahakottData = require(__dirname + "/getWalletBalance.js");
 // console.log(rahakottData());
 
-//const rahakottData = require(__dirname + "/addNewWallet.js");
-//console.log(rahakottData());
+// const rahakottData = require(__dirname + "/addNewWallet.js");
+// console.log(rahakottData());
 
 // const rahakottData = require(__dirname + "/renameWallet.js");
 // console.log(rahakottData());
@@ -43,7 +43,8 @@ const binance = new Binance().options({
 it is place where mongodb hosted locally */
 mongoose.connect("mongodb://localhost:27017/userDB", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 });
 
 const userSchema = new mongoose.Schema({
@@ -102,19 +103,25 @@ app.post("/login", function(req, res) {
 
   var account = req.body.account;
   var password = req.body.password;
+  let arrayElementID;
   console.log(account, password);
 
   Wallet.findOne({
     account: account,
     password: password
-  }, async function(err, wallet) {
+  }, function(err, wallet) {
     if (err) return console.log(err);
     if (wallet) {
       console.log(wallet);
 
       for (let i = 0; i < wallet.wallet.length; i++) {
+        console.log("I'am in FOR LOOP");
+        console.log("i is: " + i);
 
         name = account;
+        arrayElementID = wallet.wallet[i]._id;
+        console.log("arrayElementID is: " + arrayElementID);
+
         currentOid = wallet.wallet[i].oid;
         publicAddress = wallet.wallet[i].current_address;
         currentCurrency = wallet.wallet[i].currency;
@@ -138,40 +145,77 @@ app.post("/login", function(req, res) {
           })
         };
 
-        request(options, function(error, response) {
+        //we need try to do this with try-catch;
+         request(options, function(error, response) {
           if (error) throw new Error(error);
           console.log(response.body);
-          const newWalletData = JSON.parse(response.body);
-          if (JSON.stringify(newWalletData.addresses).includes(publicAddress)) {
-            console.log("Rahakott includes the addres " + publicAddress);
-            console.log(currentOid);
+          if (response.body.includes("Incorrect parameter")) {
+            /* delete a wallet from a database that does not exist */
+            Wallet.findOneAndUpdate({
+              account: account
+            }, {
+              $pull: {
+                "wallet": {
+                  _id: arrayElementID
+                }
+              }
+            }, {
+              safe: true,
+              multi: true
+            }, function(err) {
+              if (err) return console.log(err);
+              console.log("Successful wallet deletion");
 
-            /******************** Get a Wallet balance ********************/
 
-            var options = {
-              'method': 'POST',
-              'url': 'https://rahakott.io/api/v1.1/wallets/balance',
-              'headers': {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
-              },
-              body: JSON.stringify({
-                "api_key": process.env.API_KEY_RAHAKOTT,
-                "oid": currentOid
-              })
-            };
+              res.destroy(); // Need to check if this is the correct solution !!!!!!!!!!!!!
 
-            request(options, function(error, response) {
-              if (error) throw new Error(error);
-              const walletData = JSON.parse(response.body);
-              walletBalance = walletData.confirmed / 100000000;
-              //console.log(walletBalance);
-              res.redirect('main');
+
             });
+            //res.status(500).end('This wallet does not exist in rahakott.');
+          } else {
+            const newWalletData = JSON.parse(response.body);
+            if (JSON.stringify(newWalletData.addresses).includes(publicAddress)) {
+              console.log("Rahakott includes the address " + publicAddress);
+              console.log(currentOid);
+
+              /******************** Get a Wallet balance ********************/
+
+              var options = {
+                'method': 'POST',
+                'url': 'https://rahakott.io/api/v1.1/wallets/balance',
+                'headers': {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
+                },
+                body: JSON.stringify({
+                  "api_key": process.env.API_KEY_RAHAKOTT,
+                  "oid": currentOid
+                })
+              };
+              request(options, function(error, response) {
+                if (error) throw new Error(error);
+                const walletData = JSON.parse(response.body);
+                walletBalance = walletData.confirmed / 100000000;
+                //console.log(walletBalance);
+                res.redirect('main');
+              });
+            }
           }
         });
       }
+      if (wallet.wallet.length == 0) {
+
+        /* delete an account from a database that does not have wallets */
+        Wallet.findOneAndDelete({
+          account: account
+        }, function(err) {
+          if (err) console.log(err);
+          console.log("Successful account deletion");
+        });
+        res.status(401).end('This account does not exist.');
+      }
+      //res.status(401).end('HERE WE GO AGAIN');
     } else res.status(401).end('Incorrect Username and/or Password!');
   });
 });
@@ -409,7 +453,6 @@ app.post("/send", async function(req, res) {
   /*********************** "Maximume" button was pressed ************************/
   if (req.body.Maximum == "Clicked") {
 
-    let currCurrencyUSDprice;
     let sendUSDamount = null;
     let sendCryptoAmount = walletBalance;
     let recipientAddress = req.body.recipientAddress;
@@ -426,6 +469,8 @@ app.post("/send", async function(req, res) {
   /************************** "Send" button was pressed *************************/
 
   if (req.body.Send == "Clicked") {
+
+    let sendUSDamount = req.body.sendUSDamount;
     let recipientAddress = req.body.recipientAddress;
     //console.log(recipientAddress);
     let sendCryptoAmount = req.body.sendCryptoAmount;
@@ -464,13 +509,24 @@ app.post("/send", async function(req, res) {
 
     } else {
       console.log("Error! Recipient address or/and sending amount not correct.");
+      
     }
 
   }
 });
 
+/************************** EXCHANGE SCREEN *************************/
+
 app.get("/exchange", function(req, res) {
-  res.render('exchange', {});
+  res.render('exchange', {
+    currentCurrency: currentCurrency
+  });
+});
+
+app.post("/exchange", function(req, res) {
+  res.render('exchange', {
+    currentCurrency: currentCurrency
+  });
 });
 
 //mongoose.connection.close();
