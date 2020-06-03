@@ -13,15 +13,43 @@
   <form action="send" method="post">
     <div class="row">
       <div class="col">
-        <h3>From <span class="crypto"> <%= currentCurrency %> </span> to
-          <select class="form-control" name="" id="">
-            <option>BTC</option>
-            <option>LTC</option>
-          </select>
-        </h3>
+        <h3>Select currencies for exchange:</h3>
       </div>
     </div>
 
+    <br>
+    <br>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <h3>From</h3>
+      </div>
+      <div class="col-sm-3">
+        <select class="form-control" name="">
+          <option value="BTC">BTC</option>
+          <option value="LTC">LTC</option>
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <h3>To</h3>
+      </div>
+      <div class="col-sm-3">
+        <select class="form-control" name="">
+          <option value="BTC">BTC</option>
+          <option value="LTC">LTC</option>
+        </select>
+      </div>
+    </div>
+
+    <br>
+    <br>
+
+    <div class="row">
+      <div class="col">
+        <input style="width: 10rem;" class="btn btn-outline-primary btn-lg proceed" name="" value="Proceed">
+      </div>
+    </div>
   </form>
+
 
   <%- include("footer") -%>

@@ -27,6 +27,10 @@ app.get('/exchange', function(req,res){
   res.render('exchange');
 });
 
+app.get('/confirm_exchange', function(req,res){
+  res.render('confirm_exchange');
+});
+
 app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });

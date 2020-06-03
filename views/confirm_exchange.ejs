@@ -1,0 +1,77 @@
+<%- include("header") -%>
+
+  <div class="row">
+    <div class="col">
+      <h1>Exchange <span class="crypto">Crypto</span></h1>
+    </div>
+  </div>
+
+  <br>
+  <hr>
+  <br>
+
+  <form class="" action="" method="post">
+
+    <div class="row">
+      <div class="col-sm-6">
+
+          <h3>Exchange pair:</h3>
+          <br>
+          <h3>Exchange rate:</h3>
+      </div>
+      <div class="col">
+        <h3><span class="crypto">BTC</span>/<span class="crypto">LTC</span></h3>
+        <br>
+        <h3><span class="crypto">202.46</span></h3>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-6">
+
+        <h3>Amount for exchange:</h3>
+
+      </div>
+      <div class="col-sm-6">
+        <div class="input-group mb-3" style="width: 25rem; margin: auto;">
+          <input type="text" class="form-control" name="sendCryptoAmount" value="" placeholder="Enter amount in BTC" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-6">
+
+        <h3>You will get (approximately):</h3>
+
+      </div>
+      <div class="col-sm-6">
+        <h2><span class="crypto">0</span> LTC</h2>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-6">
+
+        <h3>Available for exchange: <span class="crypto">0</span> BTC</h3>
+
+      </div>
+      <div class="col-sm-6">
+        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem; margin-right: 2rem;" type="submit">Exchange</button>
+        <a class="btn btn-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" href="exchange">Back</a>
+      </div>
+    </div>
+
+  </form>
+
+
+  <%- include("footer") -%>
