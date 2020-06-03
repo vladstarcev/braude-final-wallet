@@ -76,7 +76,9 @@ let publicAddress;
 let currentOid;
 let currentCurrency;
 let walletBalance;
-const minSendingSum = 0.000001;
+let transactionHistory;
+const minSendingSum = 0.0001;
+
 // let balanceUSD = 0;
 // let balanceEUR = 0;
 // let balanceILS;
@@ -93,7 +95,7 @@ app.use(bodyParser.urlencoded({
 // app.get("/") - what happens whet users enter to my homepage
 app.get("/", function(req, res) {
   walletBalance = 0;
-  //console.log("Hey, I'am here");
+  console.log("Hey, I'am in GET func. of /");
   res.sendFile(__dirname + "/index.html");
 });
 
@@ -123,9 +125,10 @@ app.post("/login", function(req, res) {
         console.log("arrayElementID is: " + arrayElementID);
 
         currentOid = wallet.wallet[i].oid;
+        console.log(currentOid);
         publicAddress = wallet.wallet[i].current_address;
         currentCurrency = wallet.wallet[i].currency;
-        //  console.log(currentCurrency);
+        console.log("currentCurrency is: " + currentCurrency);
 
         /******************** Get a Wallet addresses list ********************/
 
@@ -146,9 +149,10 @@ app.post("/login", function(req, res) {
         };
 
         //we need try to do this with try-catch;
-         request(options, function(error, response) {
+        request(options, function(error, response) {
           if (error) throw new Error(error);
           console.log(response.body);
+          console.log();
           if (response.body.includes("Incorrect parameter")) {
             /* delete a wallet from a database that does not exist */
             Wallet.findOneAndUpdate({
@@ -165,41 +169,39 @@ app.post("/login", function(req, res) {
             }, function(err) {
               if (err) return console.log(err);
               console.log("Successful wallet deletion");
-
-
-              res.destroy(); // Need to check if this is the correct solution !!!!!!!!!!!!!
-
-
+              //res.destroy(); // Need to check if this is the correct solution !!!!!!!!!!!!!
             });
             //res.status(500).end('This wallet does not exist in rahakott.');
           } else {
             const newWalletData = JSON.parse(response.body);
             if (JSON.stringify(newWalletData.addresses).includes(publicAddress)) {
               console.log("Rahakott includes the address " + publicAddress);
-              console.log(currentOid);
+              console.log("currentOid is: " + currentOid);
 
               /******************** Get a Wallet balance ********************/
 
-              var options = {
-                'method': 'POST',
-                'url': 'https://rahakott.io/api/v1.1/wallets/balance',
-                'headers': {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
-                },
-                body: JSON.stringify({
-                  "api_key": process.env.API_KEY_RAHAKOTT,
-                  "oid": currentOid
-                })
-              };
-              request(options, function(error, response) {
-                if (error) throw new Error(error);
-                const walletData = JSON.parse(response.body);
-                walletBalance = walletData.confirmed / 100000000;
-                //console.log(walletBalance);
-                res.redirect('main');
-              });
+              // var options = {
+              //   'method': 'POST',
+              //   'url': 'https://rahakott.io/api/v1.1/wallets/balance',
+              //   'headers': {
+              //     'Accept': 'application/json',
+              //     'Content-Type': 'application/json',
+              //     'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
+              //   },
+              //   body: JSON.stringify({
+              //     "api_key": process.env.API_KEY_RAHAKOTT,
+              //     "oid": currentOid
+              //   })
+              // };
+              // request(options, function(error, response) {
+              //   if (error) throw new Error(error);
+              //   const walletData = JSON.parse(response.body);
+              //   walletBalance = walletData.confirmed / 100000000;
+              //   //console.log(walletBalance);
+              //   res.redirect('main');
+              // });
+
+              res.redirect('main');
             }
           }
         });
@@ -221,10 +223,6 @@ app.post("/login", function(req, res) {
 });
 
 /************************** CREATE WALLET (Homepage) *************************/
-// app.get("/new_account", function(req, res) {
-//   walletBalance = 0;
-//   //res.sendFile(__dirname + "/new_account.html");
-// });
 
 app.post("/new_account", function(req, res) {
 
@@ -320,74 +318,121 @@ app.get("/main", async function(req, res) {
   //walletBalance = 10; // variable for testing
   //let balanceILS;
 
-  /* switch to checking the current currency for sending
-  current currency data (name, balance and currency prices) on the "main" screen */
-  switch (currentCurrency) {
-    case "BTC":
-      fullCurrCurrencyName = "Bitcoin";
-      //console.log(fullCurrCurrencyName);
-      if (walletBalance) {
-        let ticker = await binance.prices();
-        console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
-        console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
-        balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
-        balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
-        //console.log(balanceUSD.toFixed(2));
-        //console.log(balanceEUR.toFixed(2));
-      }
-      break;
-    case "LTC":
-      fullCurrCurrencyName = "Litecoin";
+  /******************** Get a Wallet balance ********************/
 
-      /* API for getting exchange rate of EUR for LTC EUR balance
-      (binance do not support LTCEUR exchange rate)*/
-      if (walletBalance) {
-        var options = {
-          'method': 'GET',
-          'url': 'https://api.exchangeratesapi.io/latest?base=USD',
-          'headers': {
-            'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+  var options = {
+    'method': 'POST',
+    'url': 'https://rahakott.io/api/v1.1/wallets/balance',
+    'headers': {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
+    },
+    body: JSON.stringify({
+      "api_key": process.env.API_KEY_RAHAKOTT,
+      "oid": currentOid
+    })
+  };
+  await request(options, async function(error, response) {
+    if (error) throw new Error(error);
+    const walletData = JSON.parse(response.body);
+    walletBalance = walletData.confirmed / 100000000;
+    console.log("I'am in GET func. of MAIN. walletBalance is: " + walletBalance);
+
+    var options = {
+      'method': 'POST',
+      'url': 'https://rahakott.io/api/v1.1/history',
+      'headers': {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cookie': 'Cookie_1=value; __cfduid=d1e52c0daff45c29a2f2186fdd35d81e81590309503'
+      },
+      body: JSON.stringify({
+        "api_key": process.env.API_KEY_RAHAKOTT,
+        "wallet": currentOid,
+        "offset": 0,
+        "limit": 50
+      })
+
+    };
+    await request(options, async function(error, response) {
+      if (error) throw new Error(error);
+      const walletData = JSON.parse(response.body);
+      transactionHistory = walletData.history;
+      console.log(transactionHistory);
+
+      /* switch to checking the current currency for sending
+      current currency data (name, balance and currency prices) on the "main" screen */
+      switch (currentCurrency) {
+        case "BTC":
+          fullCurrCurrencyName = "Bitcoin";
+          //console.log(fullCurrCurrencyName);
+          if (walletBalance) {
+            let ticker = await binance.prices();
+            console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
+            console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
+            balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+            balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
+            //console.log(balanceUSD.toFixed(2));
+            //console.log(balanceEUR.toFixed(2));
           }
-        };
-        await request(options, function(error, response) {
-          if (error) throw new Error(error);
-          let exchangesRatesData = JSON.parse(response.body);
-          console.log(balanceEUR = exchangesRatesData.rates.EUR);
-        });
+          break;
+        case "LTC":
+          fullCurrCurrencyName = "Litecoin";
 
-        /* Getting LTCUSD exchange rate from binance */
-        let ticker = await binance.prices();
-        console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
-        balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+          /* API for getting exchange rate of EUR for LTC EUR balance
+          (binance do not support LTCEUR exchange rate)*/
+          if (walletBalance) {
+            var options = {
+              'method': 'GET',
+              'url': 'https://api.exchangeratesapi.io/latest?base=USD',
+              'headers': {
+                'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+              }
+            };
+            request(options, await
+              function(error, response) {
+                if (error) throw new Error(error);
+                let exchangesRatesData = JSON.parse(response.body);
+                console.log(balanceEUR = exchangesRatesData.rates.EUR);
+              });
 
-        /* Getting LTCEUR exchange by multiply LTCUSD exchange rate from binance
-        and exchange rate of EUR */
-        balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
-        console.log(balanceEUR);
+            /* Getting LTCUSD exchange rate from binance */
+            let ticker = await binance.prices();
+            console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
+            balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+
+            /* Getting LTCEUR exchange by multiply LTCUSD exchange rate from binance
+            and exchange rate of EUR */
+            balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
+            console.log(balanceEUR);
+          }
+          break;
+        default:
+          fullCurrCurrencyName = "Oops"
+          console.log(fullCurrCurrencyName);
+          console.log("Error! Currency is not equal to any of the supported currencies.(MAIN)");
       }
-      break;
-    default:
-      fullCurrCurrencyName = "Oops"
-      console.log(fullCurrCurrencyName);
-      console.log("Error! Currency is not equal to any of the supported currencies.(MAIN)");
-  }
 
-  QRCode.toDataURL(JSON.stringify(publicAddress), {
-    errorCorrectionLevel: 'H'
-  }, function(err, url) {
-    //console.log(url);
-
-    res.render('main', {
-      accountName: name,
-      fullCurrCurrencyName: fullCurrCurrencyName,
-      walletBalance: walletBalance,
-      currentCurrency: currentCurrency,
-      balanceUSD: balanceUSD,
-      balanceEUR: balanceEUR,
-      qrcode: url,
-      publicAddress: publicAddress
+      QRCode.toDataURL(JSON.stringify(publicAddress), {
+        errorCorrectionLevel: 'H'
+      }, function(err, url) {
+        //console.log(url);
+        res.render('main', {
+          accountName: name,
+          fullCurrCurrencyName: fullCurrCurrencyName,
+          walletBalance: walletBalance,
+          currentCurrency: currentCurrency,
+          balanceUSD: balanceUSD,
+          balanceEUR: balanceEUR,
+          qrcode: url,
+          publicAddress: publicAddress,
+          transactionHistory: transactionHistory
+        });
+      });
     });
   });
+
 });
 
 /************************** SEND SCREEN *************************/
@@ -477,39 +522,49 @@ app.post("/send", async function(req, res) {
     //console.log(sendCryptoAmount);
     console.log("I'am in Post func. of SEND");
 
-    if ((sendCryptoAmount > minSendingSum && sendCryptoAmount <= walletBalance) && recipientAddress) {
+    if ((sendCryptoAmount >= minSendingSum && sendCryptoAmount <= walletBalance) && recipientAddress) {
+      sendCryptoAmount = sendCryptoAmount * 100000000;
+      console.log(sendCryptoAmount);
       console.log(sendCryptoAmount, recipientAddress);
-      console.log("Wallet of sender is " + currentOid);
+      console.log("Wallet of sender is: " + currentOid);
 
-      // var options = {
-      //   'method': 'POST',
-      //   'url': 'https://rahakott.io/api/v1.1/send',
-      //   'headers': {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json',
-      //     'Cookie': 'Cookie_1=value; __cfduid=d1e52c0daff45c29a2f2186fdd35d81e81590309503'
-      //   },
-      //   body: JSON.stringify({
-      //     "api_key": process.env.API_KEY_RAHAKOTT,
-      //     "wallet": currentOid,
-      //     "recipient": recipientAddress,
-      //     "amount": sendCryptoAmount,
-      //     "external_only": true,
-      //     "subtract_fees": true
-      //   })
-      //
-      // };
-      // request(options, function(error, response) {
-      //   if (error) throw new Error(error);
-      //   console.log(response.body);
-      //   const sendingData = JSON.parse(response.body);
-      //   const requestNumber = sendingData.request;
-      //   console.log(requestNumber);
-      // });
+      var options = {
+        'method': 'POST',
+        'url': 'https://rahakott.io/api/v1.1/send',
+        'headers': {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Cookie': 'Cookie_1=value; __cfduid=d1e52c0daff45c29a2f2186fdd35d81e81590309503'
+        },
+        body: JSON.stringify({
+          "api_key": process.env.API_KEY_RAHAKOTT,
+          "wallet": currentOid,
+          "recipient": recipientAddress,
+          "amount": sendCryptoAmount,
+          "external_only": false,
+          "subtract_fees": false
+        })
+      };
+
+      request(options, function(error, response) {
+        if (error) throw new Error(error);
+        console.log(response.body);
+        const sendingData = JSON.parse(response.body);
+        const requestNumber = sendingData.request;
+        console.log(requestNumber);
+        res.redirect('main');
+      });
 
     } else {
       console.log("Error! Recipient address or/and sending amount not correct.");
-      
+      sendCryptoAmount = null;
+      res.render('send', {
+        recipientAddress: recipientAddress,
+        sendUSDamount: sendUSDamount,
+        sendCryptoAmount: sendCryptoAmount,
+        walletBalance: walletBalance,
+        currentCurrency: currentCurrency
+      });
     }
 
   }

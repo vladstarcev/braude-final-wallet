@@ -53,33 +53,35 @@
     <br>
     <br>
 
-    
+
     <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Transaction ID</th>
-        <th scope="col">Request ID</th>
-        <th scope="col">Address</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Service Fee</th>
-        <th scope="col">Status</th>
-        <th scope="col">Created At</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>1</td>
-        <td>1</td>
-        <td>2</td>
-        <td>3</td>
-      </tr>
-    </tbody>
-  </table>
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Transaction ID</th>
+          <th scope="col">Address</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Service Fee</th>
+          <th scope="col">Status</th>
+          <th scope="col">Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <% for(var i=0; i<transactionHistory.length; i++){ %>
+        <tr>
+          <th scope="row"> <%= i+1 %> </th>
+          <td> <%= transactionHistory[i].txid %> </td>
+          <td> <%= transactionHistory[i].address %> </td>
+          <td> <%= transactionHistory[i].amount %> </td>
+          <td> <%= transactionHistory[i].service_fee %> </td>
+          <td> <%= transactionHistory[i].failed %> </td>
+          <td> <%= transactionHistory[i].created_at %> </td>
+        </tr>
+        <% } %>
+
+      </tbody>
+    </table>
   </div>
 
 
