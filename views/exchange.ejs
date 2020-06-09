@@ -10,7 +10,7 @@
   <hr>
   <br>
 
-  <form action="send" method="post">
+  <form action="/exchange" class="exchange-form" method="POST">
     <div class="row">
       <div class="col">
         <h3>Select currencies for exchange:</h3>
@@ -25,7 +25,7 @@
         <h3>From</h3>
       </div>
       <div class="col-sm-3">
-        <select class="form-control" name="">
+        <select class="form-control" name="from">
           <option value="BTC">BTC</option>
           <option value="LTC">LTC</option>
         </select>
@@ -34,7 +34,7 @@
         <h3>To</h3>
       </div>
       <div class="col-sm-3">
-        <select class="form-control" name="">
+        <select class="form-control" name="to">
           <option value="BTC">BTC</option>
           <option value="LTC">LTC</option>
         </select>
@@ -46,7 +46,7 @@
 
     <div class="row">
       <div class="col">
-        <input style="width: 10rem;" class="btn btn-outline-primary btn-lg proceed" name="" value="Proceed">
+        <button type="submit" name="button" style="width: 10rem;" class="btn btn-outline-primary btn-lg proceed">Proceed</button>
       </div>
     </div>
   </form>

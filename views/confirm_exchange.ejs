@@ -10,7 +10,7 @@
   <hr>
   <br>
 
-  <form class="" action="" method="post">
+  <form action="/confirm_exchange" class="confirm_exchange-form" method="POST">
 
     <div class="row">
       <div class="col-sm-6">
@@ -20,7 +20,7 @@
           <h3>Exchange rate:</h3>
       </div>
       <div class="col">
-        <h3><span class="crypto">BTC</span>/<span class="crypto">LTC</span></h3>
+        <h3><span name="from" class="crypto"> <%= fromCrypto %> </span>/<span name="to" class="crypto"> <%= toCrypto %> </span></h3>
         <br>
         <h3><span class="crypto">202.46</span></h3>
       </div>
@@ -36,7 +36,7 @@
       </div>
       <div class="col-sm-6">
         <div class="input-group mb-3" style="width: 25rem; margin: auto;">
-          <input type="text" class="form-control" name="sendCryptoAmount" value="" placeholder="Enter amount in BTC" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <input type="text" class="form-control" name="exchangeCryptoAmount" value="<%= exchangeCryptoAmount %>" placeholder="Enter amount in BTC" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
           <div class="input-group-append">
             <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
           </div>

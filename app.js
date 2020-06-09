@@ -106,8 +106,8 @@ app.post("/login", function(req, res) {
   var account = req.body.account;
   var password = req.body.password;
   let arrayElementID;
+  var i = 0;
   console.log(account, password);
-
   Wallet.findOne({
     account: account,
     password: password
@@ -115,109 +115,47 @@ app.post("/login", function(req, res) {
     if (err) return console.log(err);
     if (wallet) {
       console.log(wallet);
+      name = account;
+      arrayElementID = wallet.wallet[i]._id;
+      console.log("arrayElementID is: " + arrayElementID);
+      currentOid = wallet.wallet[i].oid;
+      console.log(currentOid);
+      publicAddress = wallet.wallet[i].current_address;
+      currentCurrency = wallet.wallet[i].currency;
+      console.log("currentCurrency is: " + currentCurrency);
 
-      for (let i = 0; i < wallet.wallet.length; i++) {
-        console.log("I'am in FOR LOOP");
-        console.log("i is: " + i);
+      /******************** Get a Wallet addresses list ********************/
 
-        name = account;
-        arrayElementID = wallet.wallet[i]._id;
-        console.log("arrayElementID is: " + arrayElementID);
-
-        currentOid = wallet.wallet[i].oid;
-        console.log(currentOid);
-        publicAddress = wallet.wallet[i].current_address;
-        currentCurrency = wallet.wallet[i].currency;
-        console.log("currentCurrency is: " + currentCurrency);
-
-        /******************** Get a Wallet addresses list ********************/
-
-        var options = {
-          'method': 'POST',
-          'url': 'https://rahakott.io/api/v1.1/addresses',
-          'headers': {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
-          },
-          body: JSON.stringify({
-            "api_key": process.env.API_KEY_RAHAKOTT,
-            "wallet": currentOid,
-            "offset": 0,
-            "limit": 50
-          })
-        };
-
-        //we need try to do this with try-catch;
-        request(options, function(error, response) {
-          if (error) throw new Error(error);
-          console.log(response.body);
-          console.log();
-          if (response.body.includes("Incorrect parameter")) {
-            /* delete a wallet from a database that does not exist */
-            Wallet.findOneAndUpdate({
-              account: account
-            }, {
-              $pull: {
-                "wallet": {
-                  _id: arrayElementID
-                }
-              }
-            }, {
-              safe: true,
-              multi: true
-            }, function(err) {
-              if (err) return console.log(err);
-              console.log("Successful wallet deletion");
-              //res.destroy(); // Need to check if this is the correct solution !!!!!!!!!!!!!
-            });
-            //res.status(500).end('This wallet does not exist in rahakott.');
-          } else {
-            const newWalletData = JSON.parse(response.body);
-            if (JSON.stringify(newWalletData.addresses).includes(publicAddress)) {
-              console.log("Rahakott includes the address " + publicAddress);
-              console.log("currentOid is: " + currentOid);
-
-              /******************** Get a Wallet balance ********************/
-
-              // var options = {
-              //   'method': 'POST',
-              //   'url': 'https://rahakott.io/api/v1.1/wallets/balance',
-              //   'headers': {
-              //     'Accept': 'application/json',
-              //     'Content-Type': 'application/json',
-              //     'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
-              //   },
-              //   body: JSON.stringify({
-              //     "api_key": process.env.API_KEY_RAHAKOTT,
-              //     "oid": currentOid
-              //   })
-              // };
-              // request(options, function(error, response) {
-              //   if (error) throw new Error(error);
-              //   const walletData = JSON.parse(response.body);
-              //   walletBalance = walletData.confirmed / 100000000;
-              //   //console.log(walletBalance);
-              //   res.redirect('main');
-              // });
-
-              res.redirect('main');
-            }
+      var options = {
+        'method': 'POST',
+        'url': 'https://rahakott.io/api/v1.1/addresses',
+        'headers': {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Cookie': 'Cookie_1=value; __cfduid=d69943c7cc2f94227303f9be331eece141586525180'
+        },
+        body: JSON.stringify({
+          "api_key": process.env.API_KEY_RAHAKOTT,
+          "wallet": currentOid,
+          "offset": 0,
+          "limit": 50
+        })
+      };
+      request(options, function(error, response) {
+        if (error) throw new Error(error);
+        console.log(response.body);
+        console.log();
+        if (response.body.includes("Incorrect parameter")) {
+          console.log("The wallet is does not exist in Rahakott");
+        } else {
+          const newWalletData = JSON.parse(response.body);
+          if (JSON.stringify(newWalletData.addresses).includes(publicAddress)) {
+            console.log("Rahakott includes the address: " + publicAddress);
+            console.log("currentOid is: " + currentOid);
+            res.redirect('main');
           }
-        });
-      }
-      if (wallet.wallet.length == 0) {
-
-        /* delete an account from a database that does not have wallets */
-        Wallet.findOneAndDelete({
-          account: account
-        }, function(err) {
-          if (err) console.log(err);
-          console.log("Successful account deletion");
-        });
-        res.status(401).end('This account does not exist.');
-      }
-      //res.status(401).end('HERE WE GO AGAIN');
+        }
+      });
     } else res.status(401).end('Incorrect Username and/or Password!');
   });
 });
@@ -432,7 +370,6 @@ app.get("/main", async function(req, res) {
       });
     });
   });
-
 });
 
 /************************** SEND SCREEN *************************/
@@ -441,7 +378,7 @@ app.get("/send", function(req, res) {
   let sendUSDamount = null;
   let sendCryptoAmount = null;
   let recipientAddress = null;
-  console.log("I'am in Get func. of SEND");
+  console.log("I'am in GET func. of SEND");
   res.render('send', {
     recipientAddress: recipientAddress,
     sendUSDamount: sendUSDamount,
@@ -520,6 +457,10 @@ app.post("/send", async function(req, res) {
     //console.log(recipientAddress);
     let sendCryptoAmount = req.body.sendCryptoAmount;
     //console.log(sendCryptoAmount);
+    let dontUseInternal = req.body.dontUseInternal;
+    let feeFromAmount = req.body.feeFromAmount;
+    let external_only_flag;
+    let subtract_fees_flag;
     console.log("I'am in Post func. of SEND");
 
     if ((sendCryptoAmount >= minSendingSum && sendCryptoAmount <= walletBalance) && recipientAddress) {
@@ -527,6 +468,16 @@ app.post("/send", async function(req, res) {
       console.log(sendCryptoAmount);
       console.log(sendCryptoAmount, recipientAddress);
       console.log("Wallet of sender is: " + currentOid);
+
+      if (feeFromAmount) {
+        subtract_fees_flag = true;
+      } else
+        subtract_fees_flag = false;
+
+      if (dontUseInternal) {
+        external_only_flag = true;
+      } else
+        external_only_flag = false;
 
       var options = {
         'method': 'POST',
@@ -541,8 +492,8 @@ app.post("/send", async function(req, res) {
           "wallet": currentOid,
           "recipient": recipientAddress,
           "amount": sendCryptoAmount,
-          "external_only": false,
-          "subtract_fees": false
+          "external_only": external_only_flag,
+          "subtract_fees": subtract_fees_flag
         })
       };
 
@@ -555,6 +506,8 @@ app.post("/send", async function(req, res) {
         res.redirect('main');
       });
 
+      // await sendCrypto(subtract_fees_flag, external_only_flag, recipientAddress, sendCryptoAmount);
+      // res.redirect('main');
     } else {
       console.log("Error! Recipient address or/and sending amount not correct.");
       sendCryptoAmount = null;
@@ -566,22 +519,88 @@ app.post("/send", async function(req, res) {
         currentCurrency: currentCurrency
       });
     }
-
   }
 });
+
+/************************** Send Crypto Function *************************/
+// function sendCrypto(subtract_fees_flag, external_only_flag, recipientAddress, sendCryptoAmount) {
+//   // console.log(subtract_fees_flag);
+//   // console.log(external_only_flag);
+//   // console.log(currentOid);
+//   // console.log(recipientAddress);
+//   // console.log(sendCryptoAmount);
+//   var options = {
+//     'method': 'POST',
+//     'url': 'https://rahakott.io/api/v1.1/send',
+//     'headers': {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json',
+//       'Cookie': 'Cookie_1=value; __cfduid=d1e52c0daff45c29a2f2186fdd35d81e81590309503'
+//     },
+//     body: JSON.stringify({
+//       "api_key": process.env.API_KEY_RAHAKOTT,
+//       "wallet": currentOid,
+//       "recipient": recipientAddress,
+//       "amount": sendCryptoAmount,
+//       "external_only": external_only_flag,
+//       "subtract_fees": subtract_fees_flag
+//     })
+//   };
+//
+//   request(options, function(error, response) {
+//     if (error) throw new Error(error);
+//     console.log(response.body);
+//     const sendingData = JSON.parse(response.body);
+//     const requestNumber = sendingData.request;
+//     console.log(requestNumber);
+//   });
+// }
 
 /************************** EXCHANGE SCREEN *************************/
 
 app.get("/exchange", function(req, res) {
-  res.render('exchange', {
-    currentCurrency: currentCurrency
-  });
+  console.log("I'am in GET func. of EXCHANGE");
+  res.render('exchange');
 });
 
 app.post("/exchange", function(req, res) {
-  res.render('exchange', {
-    currentCurrency: currentCurrency
+  console.log("I'am in POST func. of EXCHANGE");
+  let exchangeCryptoAmount = null;
+  let fromCrypto = req.body.from;
+  let toCrypto = req.body.to;
+  console.log(fromCrypto);
+  console.log(toCrypto);
+  res.render('confirm_exchange', {
+    fromCrypto: fromCrypto,
+    toCrypto: toCrypto,
+    exchangeCryptoAmount: exchangeCryptoAmount
   });
+});
+
+
+/************************** CONFIRM_EXCHANGE SCREEN *************************/
+
+app.get("/confirm_exchange", function(req, res) {
+  console.log("I'am in GET func. of CONFIRM_EXCHANGE");
+  //res.render('confirm_exchange');
+});
+
+app.post("/confirm_exchange", function(req, res) {
+  console.log("I'am in POST func. of CONFIRM_EXCHANGE");
+
+  /*********************** "Maximume" button was pressed ************************/
+  if (req.body.Maximum == "Clicked") {
+    let fromCrypto = req.body.from;
+    let toCrypto = req.body.to;
+    let exchangeCryptoAmount = walletBalance;
+
+    res.render('confirm_exchange', {
+      fromCrypto: fromCrypto,
+      toCrypto: toCrypto,
+      exchangeCryptoAmount: exchangeCryptoAmount
+    });
+  }
+
 });
 
 //mongoose.connection.close();
