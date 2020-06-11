@@ -2,14 +2,62 @@
 
 <div class="row">
   <div class="col">
-    <h1>Welcome back, <span class="crypto"> <%= accountName %> </span>!</h1>
+    <h1>Welcome back, <span class="crypto"> <%= accountName %></span>!</h1>
     <br>
-    <h2>Currently on: <span class="crypto"> <%= fullCurrCurrencyName %> </span> wallet</h2>
+    <h2>Currently on: <span class="crypto current-wallet"><%= fullCurrCurrencyName %></span> wallet</h2>
     <br>
-    <button type="submit" class="btn btn-outline-primary btn-lg"><i class="fab fa-bitcoin"></i> Change wallet</button>
+    <button style="margin-right: 15px;" type="submit" class="btn btn-outline-primary btn-lg change"><i class="fas fa-exchange-alt"></i> Change wallet</button>
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet">
+      <i class="fab fa-bitcoin"></i> Add wallet
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addWallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="" action="add-wallet" method="post">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add New Wallet</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <select class="form-control add-select" name="add-wallet">
+                <option value="BTC">Bitcoin</option>
+                <option value="LTC">Litecoin</option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <p class="add-wallet-alert" style="color: red; display: none;">Wallet already exists!</p>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <input class="btn btn-primary add-wallet-btn" type="submit" value="Create">
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
-
+<br>
+<form class="" action="change-wallet" method="post">
+  <div class="row change-window" style="width: 25%; margin: auto; display: none;">
+    <div class="col-sm-6">
+      <select class="form-control" name="">
+        <option value="BTC">Bitcoin</option>
+        <option value="LTC">Litecoin</option>
+      </select>
+    </div>
+    <div class="col-sm-6">
+      <input class="btn btn-primary" type="submit" name="change_wallet" value="Submit">
+    </div>
+  </div>
+</form>
 <br>
 <hr>
 <br>
@@ -19,7 +67,7 @@
     <h1>Your balance:</h1>
     <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"> <%= currentCurrency %> </span></h2>
     <br>
-    <h3 class="forex"><%= balanceUSD %> USD | <%= balanceEUR %> EUR</h3>
+    <h3 class="forex"><%= balanceUSD %> <i class="fas fa-dollar-sign"></i> | <%= balanceEUR %> <i class="fas fa-euro-sign"></i></h3>
   </div>
 </div>
 
@@ -28,10 +76,10 @@
 <br>
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-lg-4">
     <img src="<%= qrcode %>" alt="" style="width:250px; height:250px;">
   </div>
-  <div class="col-sm-8">
+  <div class="col-lg-8">
     <h2>Your Address:</h2>
     <br>
     <h3 class="crypto-address crypto"> <%= publicAddress %> </h3>
@@ -53,35 +101,37 @@
     <br>
     <br>
 
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Transaction ID</th>
+            <th scope="col">Address</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Fee</th>
+            <th scope="col">Status</th>
+            <th scope="col">Created At</th>
+          </tr>
+        </thead>
+        <tbody>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Transaction ID</th>
-          <th scope="col">Address</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Service Fee</th>
-          <th scope="col">Status</th>
-          <th scope="col">Created At</th>
-        </tr>
-      </thead>
-      <tbody>
+          <% for(var i=0; i<transactionHistory.length; i++){ %>
+          <tr>
+            <th scope="row"> <%= i+1 %> </th>
+            <td> <%= transactionHistory[i].txid %> </td>
+            <td> <%= transactionHistory[i].address %> </td>
+            <td> <%= transactionHistory[i].amount %> </td>
+            <td> <%= transactionHistory[i].service_fee %> </td>
+            <td> <%= transactionHistory[i].failed %> </td>
+            <td> <%= transactionHistory[i].created_at %> </td>
+          </tr>
+          <% } %>
 
-        <% for(var i=0; i<transactionHistory.length; i++){ %>
-        <tr>
-          <th scope="row"> <%= i+1 %> </th>
-          <td> <%= transactionHistory[i].txid %> </td>
-          <td> <%= transactionHistory[i].address %> </td>
-          <td> <%= transactionHistory[i].amount %> </td>
-          <td> <%= transactionHistory[i].service_fee %> </td>
-          <td> <%= transactionHistory[i].failed %> </td>
-          <td> <%= transactionHistory[i].created_at %> </td>
-        </tr>
-        <% } %>
+        </tbody>
+      </table>
+    </div>
 
-      </tbody>
-    </table>
   </div>
 
 

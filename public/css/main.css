@@ -38,3 +38,8 @@ body {
 }
 
 .big-checkbox {width: 18px; height: 18px;}
+
+.crypto-name {
+  font-size: 3rem;
+  font-weight: bold;
+}
