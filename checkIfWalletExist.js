@@ -2,13 +2,12 @@ const request = require("request");
 require('dotenv').config();
 
 module.exports = getData;
-//console.log(module);
 
 function getData( walletOid ) {
 
   var options = {
     'method': 'POST',
-    'url': 'https://rahakott.io/api/v1.1/wallets/balance',
+    'url': 'https://rahakott.io/api/v1.1/addresses',
     'headers': {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -16,7 +15,9 @@ function getData( walletOid ) {
     },
     body: JSON.stringify({
       "api_key": process.env.API_KEY_RAHAKOTT,
-      "oid": walletOid // wallet.wallet[0].oid == currentOid
+      "wallet": walletOid,
+      "offset": 0,
+      "limit": 50
     })
   };
 
@@ -28,5 +29,4 @@ function getData( walletOid ) {
       resolve(walletData);
     });
   });
-
 }

@@ -22,7 +22,7 @@
       <div class="col">
         <h3><span name="from" class="crypto"> <%= fromCrypto %> </span>/<span name="to" class="crypto"> <%= toCrypto %> </span></h3>
         <br>
-        <h3><span class="crypto">202.46</span></h3>
+        <h3><span class="crypto"><%= exchangeRate %></span></h3>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
       </div>
       <div class="col-sm-6">
         <div class="input-group mb-3" style="width: 25rem; margin: auto;">
-          <input type="text" class="form-control" name="exchangeCryptoAmount" value="<%= exchangeCryptoAmount %>" placeholder="Enter amount in BTC" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <input type="text" class="form-control" name="exchangeCryptoAmount" value="<%= exchangeCryptoAmount %>" placeholder="Enter amount in <%= fromCrypto %>" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
           <div class="input-group-append">
             <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
           </div>
@@ -53,7 +53,7 @@
 
       </div>
       <div class="col-sm-6">
-        <h2><span class="crypto">0</span> LTC</h2>
+        <h2><span class="crypto">0</span> <%= toCrypto %></h2>
       </div>
     </div>
 
@@ -62,12 +62,12 @@
     <div class="row">
       <div class="col-sm-6">
 
-        <h3>Available for exchange: <span class="crypto">0</span> BTC</h3>
+        <h3>Available for exchange: <span class="crypto"><%= thisWalletBalance %></span> <%= fromCrypto %> </h3>
 
       </div>
       <div class="col-sm-6">
-        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem; margin-right: 2rem;" type="submit">Exchange</button>
-        <a class="btn btn-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" href="exchange">Back</a>
+        <button class="btn btn-outline-primary btn-lg" name="Exchange" value="Clicked" style="width: 10rem; margin-right: 2rem;" type="submit">Exchange</button>
+        <a class="btn btn-primary btn-lg" name="Back" value="Clicked" style="width: 10rem" href="exchange">Back</a>
       </div>
     </div>
 
