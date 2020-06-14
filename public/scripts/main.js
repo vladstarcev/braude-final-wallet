@@ -1,6 +1,16 @@
 $(".change").on("click", function() {
+  var wallet = $(".crypto-name").text();
+
   $(".change-window").slideToggle();
   $(".change").toggleClass("btn-primary").toggleClass("btn-outline-primary");
+
+  $(".change-wallet-option").each(function(){
+    if($(this).val() == wallet) {
+      $(this).prop("disabled", true);
+    } else {
+      $(this).prop("disabled", false).prop("selected", true);
+    }
+  });
 });
 
 $(".add-select").change(function() {
@@ -14,10 +24,13 @@ $(".add-select").change(function() {
   }
 });
 
-
-
-
 $(".exchange-from-select").change(function() {
-  var selected = $(".exchange-from-select option:selected").text();
-  console.log($(".exchange-to-select option"));
+  $(".exchange-to-option").each(function() {
+    if($(this).attr("disabled")) {
+      $(this).removeAttr("disabled");
+      $(this).prop("selected", true);
+    } else {
+      $(this).prop("disabled", true);
+    }
+  });
 });

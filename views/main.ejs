@@ -10,10 +10,15 @@
 
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet">
-      <i class="fab fa-bitcoin"></i> Add wallet
-    </button>
-
+    <%if (num_of_wallets==2) {%>
+      <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet" disabled>
+        <i class="fab fa-bitcoin"></i> Add wallet
+      </button>
+    <%} else {%>
+      <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet">
+        <i class="fab fa-bitcoin"></i> Add wallet
+      </button>
+    <%}%>
     <!-- Modal -->
     <div class="modal fade" id="addWallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -48,9 +53,9 @@
 <form class="" action="change-wallet" method="post">
   <div class="row change-window" style="width: 25%; margin: auto; display: none;">
     <div class="col-sm-6">
-      <select class="form-control" name="walletCurrency">
-        <option value="BTC">Bitcoin</option>
-        <option value="LTC">Litecoin</option>
+      <select class="form-control change-wallet-select" name="walletCurrency">
+        <option class="change-wallet-option" value="BTC">Bitcoin</option>
+        <option class="change-wallet-option" value="LTC">Litecoin</option>
       </select>
     </div>
     <div class="col-sm-6">
@@ -65,7 +70,7 @@
 <div class="row">
   <div class="col">
     <h1>Your balance:</h1>
-    <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"> <%= currentCurrency %> </span></h2>
+    <h2><span class="crypto-balance crypto"> <%= walletBalance %> </span> <span class="crypto-name"><%= currentCurrency %></span></h2>
     <br>
     <h3 class="forex"><%= balanceUSD %> <i class="fas fa-dollar-sign"></i> | <%= balanceEUR %> <i class="fas fa-euro-sign"></i></h3>
   </div>
