@@ -11,11 +11,11 @@
 
     <!-- Button trigger modal -->
     <%if (num_of_wallets==2) {%>
-      <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet" disabled>
+      <button type="button" class="btn btn-outline-primary btn-lg add-wallet-btn" data-toggle="modal" data-target="#addWallet" disabled>
         <i class="fab fa-bitcoin"></i> Add wallet
       </button>
     <%} else {%>
-      <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#addWallet">
+      <button type="button" class="btn btn-outline-primary btn-lg add-wallet-btn" data-toggle="modal" data-target="#addWallet">
         <i class="fab fa-bitcoin"></i> Add wallet
       </button>
     <%}%>
@@ -32,8 +32,8 @@
             </div>
             <div class="modal-body">
               <select class="form-control add-select" name="walletCurrency">
-                <option value="BTC">Bitcoin</option>
-                <option value="LTC">Litecoin</option>
+                <option class="add-new-wallet-option" value="BTC">Bitcoin</option>
+                <option class="add-new-wallet-option" value="LTC">Litecoin</option>
               </select>
             </div>
             <div class="modal-footer">

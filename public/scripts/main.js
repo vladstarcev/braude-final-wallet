@@ -34,3 +34,15 @@ $(".exchange-from-select").change(function() {
     }
   });
 });
+
+$(".add-wallet-btn").on("click", function() {
+  var wallet = $(".crypto-name").text();
+
+  $(".add-new-wallet-option").each(function() {
+    if($(this).val() == wallet) {
+      $(this).prop("disabled", true);
+    } else {
+      $(this).prop("disabled", false).prop("selected", true);
+    }
+  })
+});
