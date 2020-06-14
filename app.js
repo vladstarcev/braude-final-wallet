@@ -89,7 +89,18 @@ app.get("/", function(req, res) {
   req.session.destroy();
   //req.session.walletBalance = 0;
   console.log("Hey, I'am in GET func. of /");
-  res.sendFile(__dirname + "/index.html");
+  //res.sendFile(__dirname + "/index.html");
+  res.render("index", {
+    loginError: null
+  });
+});
+
+app.get("/username/:username/check", (req, res) => {
+  const account = req.params.username;
+  Wallet.findOne({account}, (err, wallet) => {
+    if (err || !wallet) res.send(404);
+    else res.send(200);
+  });
 });
 
 /***************************** LOGIN (Homepage) *****************************/
@@ -104,8 +115,9 @@ app.post("/login", function(req, res) {
   Wallet.findOne({
     account: account
   }, async function(err, wallet) {
+    // TODO problem when error, need to fix
     if (err) return console.log(err);
-    if (wallet.password === password) {
+    if (wallet && wallet.password === password) {
       req.session.userName = account;
       //console.log("req.session.userName is: " + req.session.userName);
       req.session.userPassword = wallet.password;
@@ -161,7 +173,10 @@ app.post("/login", function(req, res) {
         res.redirect('main');
       } else
         console.log("The acoount doesn't exist.");
-    } else res.status(401).end('Incorrect Username and/or Password!');
+
+    } else res.render("index", {
+      loginError: "Incorrect username / password"
+    });
   });
 });
 
