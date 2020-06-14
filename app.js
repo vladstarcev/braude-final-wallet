@@ -82,11 +82,7 @@ const userSchema = new mongoose.Schema({
 "userName" is schemaName */
 const Wallet = mongoose.model("Wallet", userSchema);
 
-const adminOidBTC = 1;
-const adminOidLTC = 2;
-const adminAddressBTC = 3;
-const adminAddressLTC = 4;
-const minSendingSum = 0.0001;
+//const minSendingSum = 0.0001;
 
 // app.get("/") - what happens whet users enter to my homepage
 app.get("/", function(req, res) {
@@ -124,8 +120,8 @@ app.post("/login", function(req, res) {
         if (wallet.wallet[ind].currency === "LTC") {
           req.session.oidLTC = wallet.wallet[ind].oid;
           req.session.addressLTC = wallet.wallet[ind].current_address;
-          //console.log("req.session.oidLTC: " + req.session.oidLTC);
-          //console.log("req.session.addessLTC: " + req.session.addressLTC);
+          console.log("req.session.oidLTC: " + req.session.oidLTC);
+          console.log("req.session.addessLTC: " + req.session.addressLTC);
         }
       }
 
@@ -246,6 +242,10 @@ app.post("/add-wallet", async function(req, res) {
   if (choosenWallet === "BTC" && !req.session.oidBTC) {
     walletName = req.session.userName + "-BTC";
     var newWalletData = await createNewWallet(walletName, "BTC");
+    newWalletData = JSON.parse(newWalletData);
+    console.log(newWalletData);
+    req.session.oidBTC = newWalletData.oid;
+    req.session.addessBTC = newWalletData.current_address;
     flag = true;
   } else
   if (choosenWallet === "BTC" && req.session.oidBTC)
@@ -253,17 +253,21 @@ app.post("/add-wallet", async function(req, res) {
   if (choosenWallet === "LTC" && !req.session.oidLTC) {
     walletName = req.session.userName + "-LTC";
     var newWalletData = await createNewWallet(walletName, "LTC");
+    newWalletData = JSON.parse(newWalletData);
+    console.log(newWalletData);
+    req.session.oidBTC = newWalletData.oid;
+    req.session.addessBTC = newWalletData.current_address;
     flag = true;
   } else
   if (choosenWallet === "LTC" && req.session.oidLTC)
     console.log("You already have a LTC wallet");
   if (flag) {
-    newWalletData = JSON.parse(newWalletData);
-    console.log(newWalletData);
-    const oid = newWalletData.oid;
+    //newWalletData = JSON.parse(newWalletData);
+    //console.log(newWalletData);
+    //const oid = newWalletData.oid;
     const currency = newWalletData.currency;
     walletName = newWalletData.name;
-    const currentAddress = newWalletData.current_address;
+    //const currentAddress = newWalletData.current_address;
     const createdDate = newWalletData.created_at;
     const updatedDate = newWalletData.updated_at;
 
@@ -286,14 +290,17 @@ app.post("/change-wallet", async function(req, res) {
   let currentCurrency = req.session.currentCurrency;
   let chooseWallet = req.body.walletCurrency;
   let account = req.session.userName;
-  //console.log("account: ", account);
+  // console.log("account: ", account);
+  // console.log("currentCurrency: ",currentCurrency);
+  // console.log("chooseWallet: ", chooseWallet);
+  // console.log("req.session.oidBTC", req.session.oidBTC);
   if (chooseWallet === "BTC" && currentCurrency === "BTC")
     console.log("You already in a BTC wallet");
   else
   if (chooseWallet === "LTC" && currentCurrency === "LTC")
     console.log("You already in a LTC wallet");
   else
-  if (chooseWallet === "LTC" && currentCurrency === "BTC" && req.session.oidLTC) {
+  if (chooseWallet === "LTC" && currentCurrency === "BTC") {
 
     const filter = {
       account: account
@@ -304,8 +311,8 @@ app.post("/change-wallet", async function(req, res) {
       if (wallet.wallet[ind].currency === "LTC") {
         req.session.oidLTC = wallet.wallet[ind].oid;
         req.session.addressLTC = wallet.wallet[ind].current_address;
-        //console.log("req.session.oidLTC: " + req.session.oidLTC);
-        //console.log("req.session.addessLTC: " + req.session.addressLTC);
+        console.log("req.session.oidLTC: " + req.session.oidLTC);
+        console.log("req.session.addessLTC: " + req.session.addressLTC);
       }
     }
 
@@ -315,11 +322,10 @@ app.post("/change-wallet", async function(req, res) {
     res.redirect('main');
 
   } else
-  if (chooseWallet === "LTC" && currentCurrency === "BTC" && !req.session.oidLTC)
+  if (chooseWallet === "LTC" && currentCurrency === "BTC") // (chooseWallet === "LTC" && currentCurrency === "BTC" && !req.session.oidLTC)
     console.log("You don't have an LTC wallet");
   else
-  if (chooseWallet === "BTC" && currentCurrency === "LTC" && req.session.oidBTC) {
-
+  if (chooseWallet === "BTC" && currentCurrency === "LTC" ) { //(chooseWallet === "BTC" && currentCurrency === "LTC" && req.session.oidBTC)
     const filter = {
       account: account
     };
@@ -327,20 +333,20 @@ app.post("/change-wallet", async function(req, res) {
 
     for (var ind = 0; ind < wallet.wallet.length; ind++) {
       if (wallet.wallet[ind].currency === "BTC") {
-        req.session.oidLTC = wallet.wallet[ind].oid;
-        req.session.addressLTC = wallet.wallet[ind].current_address;
-        //console.log("req.session.oidLTC: " + req.session.oidLTC);
-        //console.log("req.session.addessLTC: " + req.session.addressLTC);
+        req.session.oidBTC = wallet.wallet[ind].oid;
+        req.session.addressBTC = wallet.wallet[ind].current_address;
+        console.log("req.session.oidBTC: " + req.session.oidBTC);
+        console.log("req.session.addessBTC: " + req.session.addressBTC);
       }
     }
 
     req.session.currentCurrency = "BTC";
-    req.session.currentOid = req.session.oidLTC;
-    req.session.publicAddress = req.session.addressLTC;
+    req.session.currentOid = req.session.oidBTC;
+    req.session.publicAddress = req.session.addressBTC;
     res.redirect('main');
 
   } else
-  if (chooseWallet === "LTC" && currentCurrency === "BTC" && !req.session.oidLTC)
+  if (chooseWallet === "LTC" && currentCurrency === "BTC")
     console.log("You don't have an BTC wallet");
 });
 
@@ -363,6 +369,13 @@ app.get("/main", async function(req, res) {
 
   console.log("I'am in GET func. of MAIN");
 
+  const filter = {
+    account: req.session.userName
+  };
+  let doc = await Wallet.findOne(filter);
+  walletLength = doc.wallet.length;
+  //console.log("walletLength: ",walletLength);
+
   /* switch to checking the current currency for sending
   current currency data (name, balance and currency prices) on the "main" screen */
   switch (currentCurrency) {
@@ -373,8 +386,8 @@ app.get("/main", async function(req, res) {
       wallet = JSON.parse(wallet);
       walletBalance = wallet.confirmed / 100000000;
       console.log("walletBalance: ", walletBalance);
-      req.session.walletBalance = walletBalance;
       if (walletBalance) {
+        req.session.walletBalance = walletBalance;
         let ticker = await binance.prices();
         console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
         console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
@@ -382,8 +395,10 @@ app.get("/main", async function(req, res) {
         balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
         //console.log(balanceUSD.toFixed(2));
         //console.log(balanceEUR.toFixed(2));
-      } else
+      } else {
         walletBalance = 0;
+        req.session.walletBalance = walletBalance;
+      }
       break;
 
     case "LTC":
@@ -392,10 +407,10 @@ app.get("/main", async function(req, res) {
       wallet = JSON.parse(wallet);
       walletBalance = wallet.confirmed / 100000000;
       console.log("walletBalance: ", walletBalance);
-      req.session.walletBalance = walletBalance;
       /* API for getting exchange rate of EUR for LTC EUR balance
       (binance do not support LTCEUR exchange rate)*/
       if (walletBalance) {
+        req.session.walletBalance = walletBalance;
         var options = {
           'method': 'GET',
           'url': 'https://api.exchangeratesapi.io/latest?base=USD',
@@ -419,8 +434,10 @@ app.get("/main", async function(req, res) {
         and exchange rate of EUR */
         balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
         console.log(balanceEUR);
-      } else
-        walletBalance = 0;
+      } else{
+            walletBalance = 0;
+            req.session.walletBalance = walletBalance;
+      }
       break;
     default:
       fullCurrCurrencyName = "Oops"
@@ -446,7 +463,8 @@ app.get("/main", async function(req, res) {
         balanceEUR: balanceEUR,
         qrcode: url,
         publicAddress: publicAddress,
-        transactionHistory: transactionHistory
+        transactionHistory: transactionHistory,
+        num_of_wallets: walletLength
       });
     });
 });
@@ -551,7 +569,7 @@ app.post("/send", async function(req, res) {
     let subtract_fees_flag;
     console.log("I'am in Post func. of SEND");
 
-    if ((sendCryptoAmount >= minSendingSum && sendCryptoAmount <= walletBalance) && recipientAddress) {
+    if ((sendCryptoAmount >= process.env.MIN_SENDING_SUM && sendCryptoAmount <= walletBalance) && recipientAddress) {
       sendCryptoAmount = sendCryptoAmount * 100000000;
       //console.log(sendCryptoAmount);
       //console.log(sendCryptoAmount, recipientAddress);
@@ -701,9 +719,11 @@ app.post("/confirm_exchange", async function(req, res) {
     case "BTCLTC":
       //let ticker = await binance.prices();
       fromUserOid = req.session.oidBTC;
-      toUserAddress = req.session.addessLTC;
-      fromAdminOid = adminOidLTC;
-      toAdminAddress = adminAddressBTC;
+      toUserAddress = req.session.addressLTC;
+
+      fromAdminOid = process.env.ADMIN_OID_LTC;
+      toAdminAddress = process.env.ADMIN_ADRESS_BTC;
+
       console.log(`Price of BTCLTC: ${exchangeRate = ticker.LTCBTC}`);
       console.log(exchangeRate = (1 / exchangeRate).toFixed(2));
       break;
@@ -711,8 +731,10 @@ app.post("/confirm_exchange", async function(req, res) {
       //let ticker = await binance.prices();
       fromOid = req.session.oidLTC;
       toUserAddress = req.session.addessBTC;
-      fromAdminOid = adminOidBTC;
-      toAdminAddress = adminAddressLTC;
+
+      fromAdminOid = process.env.ADMIN_OID_BTC;
+      toAdminAddress = process.env.ADMIN_ADRESS_LTC;
+
       console.log(`Price of LTCBTC: ${exchangeRate = ticker.LTCBTC}`);
       break;
     default:
@@ -749,8 +771,18 @@ app.post("/confirm_exchange", async function(req, res) {
       youWillGet = youWillGet * 100000000;
       console.log("youWillGet: ", youWillGet.toFixed(0));
       exchangeCryptoAmount = exchangeCryptoAmount * 100000000;
-      //let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
-      //let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
+      // console.log("fromUserOid: " ,fromUserOid);
+      // console.log("toAdminAddress: " ,toAdminAddress);
+      // console.log("exchangeCryptoAmount: " ,exchangeCryptoAmount);
+      // console.log("fromAdminOid: " ,fromAdminOid);
+      // console.log("toUserAddress: " ,toUserAddress);
+      // console.log("youWillGet: " ,youWillGet);
+      let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
+      console.log("sendCryptoToAdmin1: " ,sendCryptoToAdmin);
+      let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
+      console.log("sendCryptoToAdmin2: " ,sendCryptoToAdmin);
+      res.redirect("main");
+
     } else {
       exchangeCryptoAmount = null;
       console.log("You do not have this currency amount");
