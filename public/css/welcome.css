@@ -1,5 +1,7 @@
 body {
   text-align: center;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .col-sm-9 {
