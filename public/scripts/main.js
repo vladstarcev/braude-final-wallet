@@ -13,3 +13,11 @@ $(".add-select").change(function() {
     $(".add-wallet-btn").addClass("disabled");
   }
 });
+
+
+
+
+$(".exchange-from-select").change(function() {
+  var selected = $(".exchange-from-select option:selected").text();
+  console.log($(".exchange-to-select option"));
+});
