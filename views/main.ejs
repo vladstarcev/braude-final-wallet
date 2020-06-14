@@ -18,7 +18,7 @@
     <div class="modal fade" id="addWallet" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-          <form class="" action="add-wallet" method="post">
+          <form class="add-wallet-form" action="/add-wallet" method="POST">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Add New Wallet</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -26,7 +26,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <select class="form-control add-select" name="add-wallet">
+              <select class="form-control add-select" name="walletCurrency">
                 <option value="BTC">Bitcoin</option>
                 <option value="LTC">Litecoin</option>
               </select>
@@ -34,7 +34,7 @@
             <div class="modal-footer">
               <p class="add-wallet-alert" style="color: red; display: none;">Wallet already exists!</p>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <input class="btn btn-primary add-wallet-btn" type="submit" value="Create">
+              <button class="btn btn-primary add-wallet-btn" type="submit" value="Create">Create</button>
             </div>
           </form>
 
@@ -48,7 +48,7 @@
 <form class="" action="change-wallet" method="post">
   <div class="row change-window" style="width: 25%; margin: auto; display: none;">
     <div class="col-sm-6">
-      <select class="form-control" name="">
+      <select class="form-control" name="walletCurrency">
         <option value="BTC">Bitcoin</option>
         <option value="LTC">Litecoin</option>
       </select>

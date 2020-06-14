@@ -16,7 +16,7 @@ function getData( walletOid ) {
     },
     body: JSON.stringify({
       "api_key": process.env.API_KEY_RAHAKOTT,
-      "oid": walletOid // wallet.wallet[0].oid == currentOid
+      "oid": walletOid
     })
   };
 
@@ -24,7 +24,7 @@ function getData( walletOid ) {
     request(options, function(error, response) {
       if (error) reject(error);
       const walletData = response.body;
-      console.log("inside function: " + walletData);
+      //console.log("inside function: " + walletData);
       resolve(walletData);
     });
   });
