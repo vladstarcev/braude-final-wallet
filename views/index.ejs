@@ -88,26 +88,26 @@
             <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
           </svg>
           <input type="text" id="newUsername" name="newUsername" class="form-control input-field" placeholder="username" autocomplete="off" required="required">
-          <p id="newUsernameError" style="display:none">This username already exists.</p>
+          <p id="newUsernameError" style="display:none; color: red; font-weight: bold">This username already exists!</p>
         </div>
         <div class="form-group">
           <svg class="bi bi-unlock-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M.5 9a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2h-7a2 2 0 01-2-2V9z" />
             <path fill-rule="evenodd" d="M8.5 4a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z" clip-rule="evenodd" />
           </svg>
-          <input type="password" name="newPassword" class="form-control input-field" placeholder="password" required="required">
+          <input type="password" name="newPassword" class="form-control input-field pass" placeholder="password" required="required">
         </div>
         <div class="form-group">
           <svg class="bi bi-lock-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <rect width="11" height="9" x="2.5" y="7" rx="2" />
             <path fill-rule="evenodd" d="M4.5 4a3.5 3.5 0 117 0v3h-1V4a2.5 2.5 0 00-5 0v3h-1V4z" clip-rule="evenodd" />
           </svg>
-          <input type="password" name="confirmNewPassword" class="form-control input-field" placeholder="confirm password" required="required">
+          <input type="password" name="confirmNewPassword" class="form-control input-field confirm-pass" placeholder="confirm password" required="required">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary create-submit-btn" disabled>Submit</button>
       </form>
       <%if (loginError) {%>
-        <p><%= loginError %></p>
+        <p style="color: red; font-weight: bold;"><%= loginError %></p>
       <%}%>
     </div>
   </div>
@@ -135,11 +135,13 @@
     }
     const inputListener = (event) => {
       const username = event.target.value;
+      
       if (username.length) {
         $.get(`/username/${username}/check`)
         .done(() => {
           newUsernameError.show();
           newUsernameIcon.css('fill', 'red');
+          $('.create-submit-btn').prop('disabled', true);
         }).fail(() => {
           newUsernameError.hide();
           newUsernameIcon.css('fill', 'green');
@@ -147,6 +149,7 @@
       } else {
         newUsernameError.hide();
         newUsernameIcon.css('fill', 'black');
+        $('.create-submit-btn').prop('disabled', true);
       }
     }
     newUsernameElement.addEventListener('input', throttle(inputListener, 600));
