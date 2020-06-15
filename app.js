@@ -217,6 +217,7 @@ app.post("/new_account", async function(req, res) {
       req.session.userName = newUsername;
       req.session.publicAddress = currentAddress;
       req.session.currentOid = oid;
+      req.session.oidBTC = oid;
       req.session.currentCurrency = currency;
       //console.log(currency, oid, walletName, publicAddress);
 
@@ -279,10 +280,10 @@ app.post("/add-wallet", async function(req, res) {
   if (flag) {
     //newWalletData = JSON.parse(newWalletData);
     //console.log(newWalletData);
-    //const oid = newWalletData.oid;
+    const oid = newWalletData.oid;
     const currency = newWalletData.currency;
     walletName = newWalletData.name;
-    //const currentAddress = newWalletData.current_address;
+    const currentAddress = newWalletData.current_address;
     const createdDate = newWalletData.created_at;
     const updatedDate = newWalletData.updated_at;
 
@@ -340,7 +341,7 @@ app.post("/change-wallet", async function(req, res) {
   if (chooseWallet === "LTC" && currentCurrency === "BTC") // (chooseWallet === "LTC" && currentCurrency === "BTC" && !req.session.oidLTC)
     console.log("You don't have an LTC wallet");
   else
-  if (chooseWallet === "BTC" && currentCurrency === "LTC" ) { //(chooseWallet === "BTC" && currentCurrency === "LTC" && req.session.oidBTC)
+  if (chooseWallet === "BTC" && currentCurrency === "LTC") { //(chooseWallet === "BTC" && currentCurrency === "LTC" && req.session.oidBTC)
     const filter = {
       account: account
     };
@@ -368,138 +369,145 @@ app.post("/change-wallet", async function(req, res) {
 /**************************** MAIN SCREEN ************************************/
 app.get("/main", async function(req, res) {
 
-  let fullCurrCurrencyName;
-  let currCurrencyUSDprice;
-  let currCurrencyEURprice;
-  let balanceUSD = 0;
-  let balanceEUR = 0;
-  let walletBalance;
-  let wallet;
-  let publicAddress = req.session.publicAddress;
-  let currentOid = req.session.currentOid;
-  let name = req.session.userName;
-  let currentCurrency = req.session.currentCurrency;
-  //walletBalance = 10; // variable for testing
-  //let balanceILS;
+  if (req.session.userName) {
+    let fullCurrCurrencyName;
+    let currCurrencyUSDprice;
+    let currCurrencyEURprice;
+    let balanceUSD = 0;
+    let balanceEUR = 0;
+    let walletBalance;
+    let wallet;
+    let publicAddress = req.session.publicAddress;
+    let currentOid = req.session.currentOid;
+    let name = req.session.userName;
+    let currentCurrency = req.session.currentCurrency;
+    //walletBalance = 10; // variable for testing
+    //let balanceILS;
 
-  console.log("I'am in GET func. of MAIN");
+    console.log("I'am in GET func. of MAIN");
 
-  const filter = {
-    account: req.session.userName
-  };
-  let doc = await Wallet.findOne(filter);
-  walletLength = doc.wallet.length;
-  //console.log("walletLength: ",walletLength);
+    const filter = {
+      account: req.session.userName
+    };
+    let doc = await Wallet.findOne(filter);
+    walletLength = doc.wallet.length;
+    //console.log("walletLength: ",walletLength);
 
-  /* switch to checking the current currency for sending
-  current currency data (name, balance and currency prices) on the "main" screen */
-  switch (currentCurrency) {
-    case "BTC":
-      fullCurrCurrencyName = "Bitcoin";
-      //console.log(fullCurrCurrencyName);
-      wallet = await getWalletBalance(req.session.oidBTC);
-      wallet = JSON.parse(wallet);
-      walletBalance = wallet.confirmed / 100000000;
-      console.log("walletBalance: ", walletBalance);
-      if (walletBalance) {
-        req.session.walletBalance = walletBalance;
-        let ticker = await binance.prices();
-        console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
-        console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
-        balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
-        balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
-        //console.log(balanceUSD.toFixed(2));
-        //console.log(balanceEUR.toFixed(2));
-      } else {
-        walletBalance = 0;
-        req.session.walletBalance = walletBalance;
-      }
-      break;
+    /* switch to checking the current currency for sending
+    current currency data (name, balance and currency prices) on the "main" screen */
+    switch (currentCurrency) {
+      case "BTC":
+        fullCurrCurrencyName = "Bitcoin";
+        //console.log(fullCurrCurrencyName);
+        wallet = await getWalletBalance(req.session.oidBTC);
+        wallet = JSON.parse(wallet);
+        walletBalance = wallet.confirmed / 100000000;
+        console.log("walletBalance: ", walletBalance);
+        if (walletBalance) {
+          req.session.walletBalance = walletBalance;
+          let ticker = await binance.prices();
+          console.log(`Price of BTCUSDT: ${currCurrencyUSDprice = ticker.BTCUSDT}`);
+          console.log(`Price of BTCEUR: ${currCurrencyEURprice = ticker.BTCEUR}`);
+          balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+          balanceEUR = (walletBalance * currCurrencyEURprice).toFixed(2);
+          //console.log(balanceUSD.toFixed(2));
+          //console.log(balanceEUR.toFixed(2));
+        } else {
+          walletBalance = 0;
+          req.session.walletBalance = walletBalance;
+        }
+        break;
 
-    case "LTC":
-      fullCurrCurrencyName = "Litecoin";
-      wallet = await getWalletBalance(req.session.oidLTC);
-      wallet = JSON.parse(wallet);
-      walletBalance = wallet.confirmed / 100000000;
-      console.log("walletBalance: ", walletBalance);
-      /* API for getting exchange rate of EUR for LTC EUR balance
-      (binance do not support LTCEUR exchange rate)*/
-      if (walletBalance) {
-        req.session.walletBalance = walletBalance;
-        var options = {
-          'method': 'GET',
-          'url': 'https://api.exchangeratesapi.io/latest?base=USD',
-          'headers': {
-            'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
-          }
-        };
-        request(options, await
-          function(error, response) {
-            if (error) throw new Error(error);
-            let exchangesRatesData = JSON.parse(response.body);
-            console.log(balanceEUR = exchangesRatesData.rates.EUR);
-          });
+      case "LTC":
+        fullCurrCurrencyName = "Litecoin";
+        wallet = await getWalletBalance(req.session.oidLTC);
+        wallet = JSON.parse(wallet);
+        walletBalance = wallet.confirmed / 100000000;
+        console.log("walletBalance: ", walletBalance);
+        /* API for getting exchange rate of EUR for LTC EUR balance
+        (binance do not support LTCEUR exchange rate)*/
+        if (walletBalance) {
+          req.session.walletBalance = walletBalance;
+          var options = {
+            'method': 'GET',
+            'url': 'https://api.exchangeratesapi.io/latest?base=USD',
+            'headers': {
+              'Cookie': '__cfduid=df57a5f09aab3bdf123c640e0d3a64fdf1589196784'
+            }
+          };
+          request(options, await
+            function(error, response) {
+              if (error) throw new Error(error);
+              let exchangesRatesData = JSON.parse(response.body);
+              console.log(balanceEUR = exchangesRatesData.rates.EUR);
+            });
 
-        /* Getting LTCUSD exchange rate from binance */
-        let ticker = await binance.prices();
-        console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
-        balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
+          /* Getting LTCUSD exchange rate from binance */
+          let ticker = await binance.prices();
+          console.log(`Price of LTCUSDT: ${currCurrencyUSDprice = ticker.LTCUSDT}`);
+          balanceUSD = (walletBalance * currCurrencyUSDprice).toFixed(2);
 
-        /* Getting LTCEUR exchange by multiply LTCUSD exchange rate from binance
-        and exchange rate of EUR */
-        balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
-        console.log(balanceEUR);
-      } else{
-            walletBalance = 0;
-            req.session.walletBalance = walletBalance;
-      }
-      break;
-    default:
-      fullCurrCurrencyName = "Oops"
-      console.log(fullCurrCurrencyName);
-      console.log("Error! Currency is not equal to any of the supported currencies.(MAIN)");
-  }
+          /* Getting LTCEUR exchange by multiply LTCUSD exchange rate from binance
+          and exchange rate of EUR */
+          balanceEUR = (balanceUSD * balanceEUR).toFixed(2);
+          console.log(balanceEUR);
+        } else {
+          walletBalance = 0;
+          req.session.walletBalance = walletBalance;
+        }
+        break;
+      default:
+        fullCurrCurrencyName = "Oops"
+        console.log(fullCurrCurrencyName);
+        console.log("Error! Currency is not equal to any of the supported currencies.(MAIN)");
+    }
 
-  let walletData = await getWalletHistory(currentOid);
-  walletData = JSON.parse(walletData);
-  transactionHistory = walletData.history;
+    let walletData = await getWalletHistory(currentOid);
+    walletData = JSON.parse(walletData);
+    transactionHistory = walletData.history;
 
-  QRCode.toDataURL(JSON.stringify(publicAddress), {
-      errorCorrectionLevel: 'H'
-    }, await
-    function(err, url) {
-      //console.log(url);
-      res.render('main', {
-        accountName: name,
-        fullCurrCurrencyName: fullCurrCurrencyName,
-        walletBalance: walletBalance,
-        currentCurrency: currentCurrency,
-        balanceUSD: balanceUSD,
-        balanceEUR: balanceEUR,
-        qrcode: url,
-        publicAddress: publicAddress,
-        transactionHistory: transactionHistory,
-        num_of_wallets: walletLength
+    QRCode.toDataURL(JSON.stringify(publicAddress), {
+        errorCorrectionLevel: 'H'
+      }, await
+      function(err, url) {
+        //console.log(url);
+        res.render('main', {
+          accountName: name,
+          fullCurrCurrencyName: fullCurrCurrencyName,
+          walletBalance: walletBalance,
+          currentCurrency: currentCurrency,
+          balanceUSD: balanceUSD,
+          balanceEUR: balanceEUR,
+          qrcode: url,
+          publicAddress: publicAddress,
+          transactionHistory: transactionHistory,
+          num_of_wallets: walletLength
+        });
       });
-    });
+  } else
+    res.redirect("/");
+
 });
 
 /************************** SEND SCREEN *************************/
 
 app.get("/send", function(req, res) {
-  let sendUSDamount = null;
-  let sendCryptoAmount = null;
-  let recipientAddress = null;
-  let walletBalance = req.session.walletBalance;
-  let currentCurrency = req.session.currentCurrency;
-  console.log("I'am in GET func. of SEND");
-  res.render('send', {
-    recipientAddress: recipientAddress,
-    sendUSDamount: sendUSDamount,
-    sendCryptoAmount: sendCryptoAmount,
-    walletBalance: walletBalance,
-    currentCurrency: currentCurrency
-  });
+  if (req.session.userName) {
+    let sendUSDamount = null;
+    let sendCryptoAmount = null;
+    let recipientAddress = null;
+    let walletBalance = req.session.walletBalance;
+    let currentCurrency = req.session.currentCurrency;
+    console.log("I'am in GET func. of SEND");
+    res.render('send', {
+      recipientAddress: recipientAddress,
+      sendUSDamount: sendUSDamount,
+      sendCryptoAmount: sendCryptoAmount,
+      walletBalance: walletBalance,
+      currentCurrency: currentCurrency
+    });
+  } else
+    rs.redirect("/");
 });
 
 
@@ -643,8 +651,11 @@ app.post("/send", async function(req, res) {
 /************************** EXCHANGE SCREEN *************************/
 
 app.get("/exchange", function(req, res) {
-  console.log("I'am in GET func. of EXCHANGE");
-  res.render('exchange');
+  if (req.session.userName) {
+    console.log("I'am in GET func. of EXCHANGE");
+    res.render('exchange');
+  } else res.redirect("/");
+
 });
 
 app.post("/exchange", async function(req, res) {
@@ -793,9 +804,9 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("toUserAddress: " ,toUserAddress);
       // console.log("youWillGet: " ,youWillGet);
       let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
-      console.log("sendCryptoToAdmin1: " ,sendCryptoToAdmin);
+      console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
       let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
-      console.log("sendCryptoToAdmin2: " ,sendCryptoToAdmin);
+      console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
       res.redirect("main");
 
     } else {
