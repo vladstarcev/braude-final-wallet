@@ -114,13 +114,11 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Transaction ID</th>
-            <th scope="col">Address</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Fee</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created At</th>
+            <th class="crypto" scope="col">#</th>
+            <th class="crypto" scope="col">Transaction ID</th>
+            <th class="crypto" scope="col">Reciever's Address</th>
+            <th class="crypto" scope="col">Amount</th>
+            <th class="crypto" scope="col">Created At</th>
           </tr>
         </thead>
         <tbody>
@@ -131,8 +129,6 @@
             <td> <%= transactionHistory[i].txid %> </td>
             <td> <%= transactionHistory[i].address %> </td>
             <td> <%= transactionHistory[i].amount %> </td>
-            <td> <%= transactionHistory[i].service_fee %> </td>
-            <td> <%= transactionHistory[i].failed %> </td>
             <td> <%= transactionHistory[i].created_at %> </td>
           </tr>
           <% } %>

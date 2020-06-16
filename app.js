@@ -911,11 +911,11 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("toUserAddress: " ,toUserAddress);
       // console.log("youWillGet: " ,youWillGet);
 
-      // let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
-      // console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
-      // let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
-      // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
-      // res.redirect("main");
+      let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
+      console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
+      let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
+      console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
+      res.redirect("main");
     } else {
       youWillGet = 0;
       insufficient = true;
