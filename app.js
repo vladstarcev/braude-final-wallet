@@ -109,7 +109,10 @@ app.post("/login", function(req, res) {
   var account = req.body.account;
   var password = req.body.password;
   var walletLength;
-  var i = 0;
+  let existBTCflag = false;
+  let existLTCflag = false;
+  console.log("existBTCflag: ",existBTCflag);
+  console.log("existLTCflag: ",existLTCflag);
   console.log(account, password);
   Wallet.findOne({
     account: account
@@ -126,18 +129,22 @@ app.post("/login", function(req, res) {
             if (wallet.wallet[ind].currency === "BTC") {
               req.session.oidBTC = wallet.wallet[ind].oid;
               req.session.addressBTC = wallet.wallet[ind].current_address;
+              existBTCflag = true;
+              console.log("existBTCflag: ",existBTCflag);
               //console.log("req.session.oidBTC: " + req.session.oidBTC);
               //console.log("req.session.addessBTC: " + req.session.addressBTC);
             }
             if (wallet.wallet[ind].currency === "LTC") {
               req.session.oidLTC = wallet.wallet[ind].oid;
               req.session.addressLTC = wallet.wallet[ind].current_address;
-              console.log("req.session.oidLTC: " + req.session.oidLTC);
-              console.log("req.session.addessLTC: " + req.session.addressLTC);
+              existLTCflag = true;
+              console.log("existLTCflag: ",existLTCflag);
+              // console.log("req.session.oidLTC: " + req.session.oidLTC);
+              // console.log("req.session.addessLTC: " + req.session.addressLTC);
             }
           }
 
-          if (req.session.oidBTC) {
+          if (req.session.oidBTC && existBTCflag) {
             let wallet;
             wallet = await checkIfWalletExist(req.session.oidBTC);
             console.log("wallet: " + wallet);
@@ -149,7 +156,7 @@ app.post("/login", function(req, res) {
             }
           }
 
-          if (req.session.oidLTC) {
+          if (req.session.oidLTC && existLTCflag) {
             let wallet;
             wallet = await checkIfWalletExist(req.session.oidLTC);
             console.log("wallet: " + wallet);
@@ -161,12 +168,12 @@ app.post("/login", function(req, res) {
             }
           }
 
-          if (req.session.oidBTC) {
+          if (req.session.oidBTC && existBTCflag) {
             req.session.currentCurrency = "BTC";
             req.session.currentOid = req.session.oidBTC;
             req.session.publicAddress = req.session.addressBTC;
             res.redirect('main');
-          } else if (req.session.oidLTC) {
+          } else if (req.session.oidLTC && existLTCflag) {
             req.session.currentCurrency = "LTC";
             req.session.currentOid = req.session.oidLTC;
             req.session.publicAddress = req.session.addressLTC;
@@ -690,7 +697,10 @@ app.post("/exchange", async function(req, res) {
         req.session.thisWalletBalance = thisWalletBalance;
       } else {
         console.log(`Price of LTCBTC: ${exchangeRate = ticker.LTCBTC}`);
+        console.log(exchangeRate = (1 / exchangeRate).toFixed(2));
         thisWalletBalance = 0;
+        req.session.thisWalletBalance = thisWalletBalance;
+        console.log("req.session.thisWalletBalance: ",req.session.thisWalletBalance);
         console.log("First you need to create an LTC wallet");
       }
       break;
@@ -707,6 +717,8 @@ app.post("/exchange", async function(req, res) {
       } else {
         console.log(`Price of LTCBTC: ${exchangeRate = ticker.LTCBTC}`);
         thisWalletBalance = 0;
+        req.session.thisWalletBalance = thisWalletBalance;
+        console.log("req.session.thisWalletBalance: ",req.session.thisWalletBalance);
         console.log("First you need to create an LTC wallet");
       }
       break;
@@ -777,7 +789,7 @@ app.post("/confirm_exchange", async function(req, res) {
 
   if (req.body.Maximum == "Clicked") {
 
-    exchangeCryptoAmount = req.session.walletBalance;
+    exchangeCryptoAmount = req.session.thisWalletBalance;
     youWillGet = 0;
 
     res.render('confirm_exchange', {
