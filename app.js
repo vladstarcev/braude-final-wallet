@@ -806,8 +806,6 @@ app.post("/confirm_exchange", async function(req, res) {
     let temp = youWillGet;
     youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(4);
     console.log("youWillGet after fee: ", youWillGet);
-
-
     res.render('confirm_exchange', {
       fromCrypto: fromCrypto,
       toCrypto: toCrypto,
@@ -839,7 +837,6 @@ app.post("/confirm_exchange", async function(req, res) {
 
       if(youWillGet < process.env.MIN_SENDING_SUM){
         insufficient = true;
-
         res.render('confirm_exchange', {
           fromCrypto: fromCrypto,
           toCrypto: toCrypto,
@@ -916,6 +913,8 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
       // res.redirect("main");
     } else {
+      youWillGet = 0;
+      insufficient = true;
       exchangeCryptoAmount = null;
       console.log("You do not have this currency amount");
       res.render('confirm_exchange', {
