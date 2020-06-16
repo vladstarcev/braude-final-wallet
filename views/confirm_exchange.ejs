@@ -41,6 +41,9 @@
             <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
           </div>
         </div>
+        <%if (insufficient) {%>
+          <p style="color: red; font-weight: bold;">Insufficient amount!</p>
+        <%}%>
       </div>
     </div>
 

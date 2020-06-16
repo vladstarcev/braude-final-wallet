@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="css/welcome.css">
   <link rel="icon" href="images/wallet_icon.ico">
@@ -30,24 +31,24 @@
             <div class="carousel-item active">
               <img src="images/crypto1.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
-                <h5>FAST</h5>
-                <p>Transactions are almost instant!</p>
+                <h5 class="image-text">FAST</h5>
+                <p class="image-text">Transactions are almost instant!</p>
               </div>
             </div>
 
             <div class="carousel-item">
               <img src="images/crypto2.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
-                <h5>CONVENIENT</h5>
-                <p>User-friendly interface and pretty design!</p>
+                <h5 class="image-text">CONVENIENT</h5>
+                <p class="image-text">User-friendly interface and pretty design!</p>
               </div>
             </div>
 
             <div class="carousel-item">
               <img src="images/crypto3.jpg" class="d-block w-100" alt="...">
               <div class="carousel-caption d-none d-md-block">
-                <h5>SECURE</h5>
-                <p>Your sensitive data is under our top level security!</p>
+                <h5 class="image-text">SECURE</h5>
+                <p class="image-text">Your sensitive data is under our top level security!</p>
               </div>
             </div>
           </div>
@@ -135,7 +136,7 @@
     }
     const inputListener = (event) => {
       const username = event.target.value;
-      
+
       if (username.length) {
         $.get(`/username/${username}/check`)
         .done(() => {
