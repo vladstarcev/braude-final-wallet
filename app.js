@@ -518,7 +518,7 @@ app.get("/send", function(req, res) {
       currentCurrency: currentCurrency
     });
   } else
-    rs.redirect("/");
+    res.redirect("/");
 });
 
 
@@ -734,11 +734,6 @@ app.post("/exchange", async function(req, res) {
 
 /************************** CONFIRM_EXCHANGE SCREEN *************************/
 
-app.get("/confirm_exchange", function(req, res) {
-  console.log("I'am in GET func. of CONFIRM_EXCHANGE");
-  //res.render('confirm_exchange');
-});
-
 app.post("/confirm_exchange", async function(req, res) {
   console.log("I'am in POST func. of CONFIRM_EXCHANGE");
 
@@ -922,10 +917,7 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
       // res.redirect("main");
     } else {
-<<<<<<< HEAD
       youWillGet = 0;
-=======
->>>>>>> c7d8260f4673e844c1ad2b27e0f71ceec3c64b46
       insufficient = true;
       exchangeCryptoAmount = null;
       console.log("You do not have this currency amount");
@@ -997,6 +989,9 @@ async function addWalletToAccount(account, walletOid, currency, walName, current
   return wallet;
 }
 
+app.get('*', function(req, res){
+  res.send('what???', 404);
+});
 //mongoose.connection.close();
 
 app.listen(3000, function() {
