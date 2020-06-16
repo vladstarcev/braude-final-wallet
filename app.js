@@ -15,6 +15,9 @@ const mongoose = require("mongoose");
 //const encrypt = require("mongoose-encryption");
 //const md5 = require("md5");
 
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
 const QRCode = require('qrcode');
 
 
@@ -108,7 +111,6 @@ app.get("/username/:username/check", (req, res) => {
 /***************************** LOGIN (Homepage) *****************************/
 // "post request" is getting data back from our web page to server
 app.post("/login", function(req, res) {
-
   var account = req.body.account;
   var password = req.body.password;
   var walletLength;
@@ -116,137 +118,144 @@ app.post("/login", function(req, res) {
   console.log(account, password);
   Wallet.findOne({
     account: account
-  }, async function(err, wallet) {
+  }, function(err, wallet) {
     // TODO problem when error, need to fix
     if (err) return console.log(err);
-    if (wallet && wallet.password === password) {
-      req.session.userName = account;
-      //console.log("req.session.userName is: " + req.session.userName);
-      req.session.userPassword = wallet.password;
+    if(wallet) {
+      bcrypt.compare(req.body.password, wallet.password, async function(err, result) {
+        if (result) {
+          req.session.userName = account;
+          //console.log("req.session.userName is: " + req.session.userName);
 
-      for (var ind = 0; ind < wallet.wallet.length; ind++) {
-        if (wallet.wallet[ind].currency === "BTC") {
-          req.session.oidBTC = wallet.wallet[ind].oid;
-          req.session.addressBTC = wallet.wallet[ind].current_address;
-          //console.log("req.session.oidBTC: " + req.session.oidBTC);
-          //console.log("req.session.addessBTC: " + req.session.addressBTC);
-        }
-        if (wallet.wallet[ind].currency === "LTC") {
-          req.session.oidLTC = wallet.wallet[ind].oid;
-          req.session.addressLTC = wallet.wallet[ind].current_address;
-          console.log("req.session.oidLTC: " + req.session.oidLTC);
-          console.log("req.session.addessLTC: " + req.session.addressLTC);
-        }
-      }
+          for (var ind = 0; ind < wallet.wallet.length; ind++) {
+            if (wallet.wallet[ind].currency === "BTC") {
+              req.session.oidBTC = wallet.wallet[ind].oid;
+              req.session.addressBTC = wallet.wallet[ind].current_address;
+              //console.log("req.session.oidBTC: " + req.session.oidBTC);
+              //console.log("req.session.addessBTC: " + req.session.addressBTC);
+            }
+            if (wallet.wallet[ind].currency === "LTC") {
+              req.session.oidLTC = wallet.wallet[ind].oid;
+              req.session.addressLTC = wallet.wallet[ind].current_address;
+              console.log("req.session.oidLTC: " + req.session.oidLTC);
+              console.log("req.session.addessLTC: " + req.session.addressLTC);
+            }
+          }
 
-      if (req.session.oidBTC) {
-        let wallet;
-        wallet = await checkIfWalletExist(req.session.oidBTC);
-        console.log("wallet: " + wallet);
-        if (!wallet) {
-          req.session.oidBTC = false;
-          req.session.addressBTC = false;
-          let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidBTC);
-          //console.log("walletLength", walletLength);
-        }
-      }
+          if (req.session.oidBTC) {
+            let wallet;
+            wallet = await checkIfWalletExist(req.session.oidBTC);
+            console.log("wallet: " + wallet);
+            if (!wallet) {
+              req.session.oidBTC = false;
+              req.session.addressBTC = false;
+              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidBTC);
+              //console.log("walletLength", walletLength);
+            }
+          }
 
-      if (req.session.oidLTC) {
-        let wallet;
-        wallet = await checkIfWalletExist(req.session.oidLTC);
-        console.log("wallet: " + wallet);
-        if (!wallet) {
-          req.session.oidLTC = false;
-          req.session.addressLTC = false;
-          let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidLTC);
-          //console.log("walletLength", walletLength);
-        }
-      }
+          if (req.session.oidLTC) {
+            let wallet;
+            wallet = await checkIfWalletExist(req.session.oidLTC);
+            console.log("wallet: " + wallet);
+            if (!wallet) {
+              req.session.oidLTC = false;
+              req.session.addressLTC = false;
+              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidLTC);
+              //console.log("walletLength", walletLength);
+            }
+          }
 
-      if (req.session.oidBTC) {
-        req.session.currentCurrency = "BTC";
-        req.session.currentOid = req.session.oidBTC;
-        req.session.publicAddress = req.session.addressBTC;
-        res.redirect('main');
-      } else if (req.session.oidLTC) {
-        req.session.currentCurrency = "LTC";
-        req.session.currentOid = req.session.oidLTC;
-        req.session.publicAddress = req.session.addressLTC;
-        res.redirect('main');
-      } else
-        console.log("The acoount doesn't exist.");
-
-    } else res.render("index", {
-      loginError: "Incorrect username / password"
-    });
+          if (req.session.oidBTC) {
+            req.session.currentCurrency = "BTC";
+            req.session.currentOid = req.session.oidBTC;
+            req.session.publicAddress = req.session.addressBTC;
+            res.redirect('main');
+          } else if (req.session.oidLTC) {
+            req.session.currentCurrency = "LTC";
+            req.session.currentOid = req.session.oidLTC;
+            req.session.publicAddress = req.session.addressLTC;
+            res.redirect('main');
+          } else
+            console.log("The acoount doesn't exist.");
+        } else res.render("index", {
+          loginError: "Incorrect username / password"
+        });
+      })
+    }
   });
 });
 
 /************************** CREATE WALLET (Homepage) *************************/
 
-app.post("/new_account", async function(req, res) {
+app.post("/new_account", function(req, res) {
+  bcrypt.hash(req.body.newPassword, saltRounds, async function(err, hash) {
+    if (err) {
+      console.log(err);
+    } else {
+      var newUsername = req.body.newUsername;
+      var newPassword = req.body.newPassword;
+      var confirmNewPassword = req.body.confirmNewPassword;
+      console.log(newUsername, newPassword, confirmNewPassword);
+      var walletName = newUsername + "-BTC";
 
-  var newUsername = req.body.newUsername;
-  var newPassword = req.body.newPassword;
-  var confirmNewPassword = req.body.confirmNewPassword;
-  console.log(newUsername, newPassword, confirmNewPassword);
-  var walletName = newUsername + "-BTC";
+      const filter = {
+        account: newUsername
+      };
 
-  const filter = {
-    account: newUsername
-  };
+      let wallet = await Wallet.findOne(filter);
 
-  let wallet = await Wallet.findOne(filter);
+      if (wallet) {
+        console.log(wallet);
+        console.log("Error. Account with this name already exist.")
+        res.status(401).end('Incorrect Username and/or Password!');
+      } else {
+        if (newPassword === confirmNewPassword) {
+          console.log("I'am new here.");
+          //console.log("walletName is: " ,walletName);
+          var newWalletData = await createNewWallet(walletName, "BTC");
+          newWalletData = JSON.parse(newWalletData);
+          console.log(newWalletData);
+          const oid = newWalletData.oid;
+          const currency = newWalletData.currency;
+          walletName = newWalletData.name;
+          const currentAddress = newWalletData.current_address;
+          const createdDate = newWalletData.created_at;
+          const updatedDate = newWalletData.updated_at;
 
-  if (wallet) {
-    console.log(wallet);
-    console.log("Error. Account with this name already exist.")
-    res.status(401).end('Incorrect Username and/or Password!');
-  } else {
-    if (newPassword === confirmNewPassword) {
-      console.log("I'am new here.");
-      //console.log("walletName is: " ,walletName);
-      var newWalletData = await createNewWallet(walletName, "BTC");
-      newWalletData = JSON.parse(newWalletData);
-      console.log(newWalletData);
-      const oid = newWalletData.oid;
-      const currency = newWalletData.currency;
-      walletName = newWalletData.name;
-      const currentAddress = newWalletData.current_address;
-      const createdDate = newWalletData.created_at;
-      const updatedDate = newWalletData.updated_at;
+          req.session.userName = newUsername;
+          req.session.publicAddress = currentAddress;
+          req.session.currentOid = oid;
+          req.session.oidBTC = oid;
+          req.session.currentCurrency = currency;
+          //console.log(currency, oid, walletName, publicAddress);
 
-      req.session.userName = newUsername;
-      req.session.publicAddress = currentAddress;
-      req.session.currentOid = oid;
-      req.session.oidBTC = oid;
-      req.session.currentCurrency = currency;
-      //console.log(currency, oid, walletName, publicAddress);
-
-      /*********************** SAVE DATA IN DB ****************************/
-      const newWallet = new Wallet({
-        account: newUsername,
-        password: newPassword,
-        wallet: [{
-          oid: oid,
-          currency: currency,
-          wallet_name: walletName,
-          current_address: currentAddress,
-          created_at: createdDate,
-          updated_at: updatedDate
-        }]
-      });
-      //to save newWallet document into Wallet collection
-      newWallet.save(await
-        function(err) {
-          if (err) return console.error(err);
-          console.log("Succesfully saved in userDB");
-          /* redirect to "main screen"
-          when we redirect we "jump" to get request of route */
-          res.redirect('main');
-        });
-    } else res.status(401).end('Incorrect Username and/or Password!');
-  }
+          /*********************** SAVE DATA IN DB ****************************/
+          const newWallet = new Wallet({
+            account: newUsername,
+            password: hash,
+            wallet: [{
+              oid: oid,
+              currency: currency,
+              wallet_name: walletName,
+              current_address: currentAddress,
+              created_at: createdDate,
+              updated_at: updatedDate
+            }]
+          });
+          //to save newWallet document into Wallet collection
+          newWallet.save(await
+            function(err) {
+              if (err) return console.error(err);
+              console.log("Succesfully saved in userDB");
+              /* redirect to "main screen"
+              when we redirect we "jump" to get request of route */
+              res.redirect('main');
+            });
+        } else res.status(401).end('Incorrect Username and/or Password!');
+      }
+    }
+  })
 });
 
 /************************** ADD WALLET (MAIN) *************************/
@@ -916,6 +925,7 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
       // res.redirect("main");
     } else {
+      insufficient = true;
       exchangeCryptoAmount = null;
       console.log("You do not have this currency amount");
       res.render('confirm_exchange', {
