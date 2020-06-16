@@ -6,8 +6,12 @@
     <br>
     <h2>Currently on: <span class="crypto current-wallet"><%= fullCurrCurrencyName %></span> wallet</h2>
     <br>
-    <button style="margin-right: 15px;" type="submit" class="btn btn-outline-primary btn-lg change"><i class="fas fa-exchange-alt"></i> Change wallet</button>
 
+    <%if (num_of_wallets==1) {%>
+      <button style="margin-right: 15px;" type="submit" class="btn btn-outline-primary btn-lg change" disabled><i class="fas fa-exchange-alt"></i> Change wallet</button>
+    <%} else {%>
+      <button style="margin-right: 15px;" type="submit" class="btn btn-outline-primary btn-lg change"><i class="fas fa-exchange-alt"></i> Change wallet</button>
+    <%}%>
 
     <!-- Button trigger modal -->
     <%if (num_of_wallets==2) {%>
