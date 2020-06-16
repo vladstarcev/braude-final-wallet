@@ -97,7 +97,9 @@ app.get("/", function(req, res) {
 
 app.get("/username/:username/check", (req, res) => {
   const account = req.params.username;
-  Wallet.findOne({account}, (err, wallet) => {
+  Wallet.findOne({
+    account
+  }, (err, wallet) => {
     if (err || !wallet) res.send(404);
     else res.send(200);
   });
@@ -665,6 +667,7 @@ app.post("/exchange", async function(req, res) {
   let thisWalletBalance = 0;
   let fromCrypto = req.body.from;
   let toCrypto = req.body.to;
+  let insufficient = false;
   req.session.fromCrypto = fromCrypto;
   req.session.toCrypto = toCrypto;
   //console.log(fromCrypto + toCrypto);
@@ -713,7 +716,9 @@ app.post("/exchange", async function(req, res) {
     toCrypto: toCrypto,
     exchangeRate: exchangeRate,
     exchangeCryptoAmount: exchangeCryptoAmount,
-    thisWalletBalance: thisWalletBalance
+    youWillGet: 0,
+    thisWalletBalance: thisWalletBalance,
+    insufficient: insufficient
   });
 });
 
@@ -738,6 +743,7 @@ app.post("/confirm_exchange", async function(req, res) {
   let toUserAddress;
   let toAdminAddress;
   let youWillGet;
+  let insufficient = false;
 
   console.log(fromCrypto + toCrypto);
   let ticker = await binance.prices();
@@ -773,42 +779,142 @@ app.post("/confirm_exchange", async function(req, res) {
   if (req.body.Maximum == "Clicked") {
 
     exchangeCryptoAmount = req.session.walletBalance;
+    youWillGet = 0;
 
     res.render('confirm_exchange', {
       fromCrypto: fromCrypto,
       toCrypto: toCrypto,
       exchangeRate: exchangeRate,
       exchangeCryptoAmount: exchangeCryptoAmount,
-      thisWalletBalance: thisWalletBalance
+      youWillGet: youWillGet,
+      thisWalletBalance: thisWalletBalance,
+      insufficient: insufficient
+    });
+  }
+
+
+  /*********************** "Calculate" button was pressed ************************/
+
+  if (req.body.Calculate == "Clicked") {
+
+    exchangeCryptoAmount = req.body.exchangeCryptoAmount;
+    youWillGet = (exchangeRate * exchangeCryptoAmount);
+
+    console.log("youWillGet: ", youWillGet);
+    //youWillGet = youWillGet * 100000000;
+    console.log("youWillGet before fee: ", youWillGet);
+    let temp = youWillGet;
+    youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(4);
+    console.log("youWillGet after fee: ", youWillGet);
+
+
+    res.render('confirm_exchange', {
+      fromCrypto: fromCrypto,
+      toCrypto: toCrypto,
+      exchangeRate: exchangeRate,
+      youWillGet: youWillGet,
+      exchangeCryptoAmount: exchangeCryptoAmount,
+      thisWalletBalance: thisWalletBalance,
+      insufficient: insufficient
     });
   }
 
   /************************** "Exchange" button was pressed *************************/
 
   if (req.body.Exchange == "Clicked") {
+    let walletExist = false;
+    let walletName;
+    let account = req.session.userName;
+    //let insufficient = false;
+
+    // walletName = req.session.userName + "-" + req.session.toCrypto
+    // console.log("walletName: ", walletName);
 
     exchangeCryptoAmount = req.body.exchangeCryptoAmount;
 
 
-    if (exchangeCryptoAmount <= thisWalletBalance) {
+    if (exchangeCryptoAmount <= thisWalletBalance && exchangeCryptoAmount >= process.env.MIN_SENDING_SUM && req.session.currentCurrency === req.session.fromCrypto) {
       console.log(exchangeCryptoAmount);
       youWillGet = exchangeCryptoAmount * exchangeRate;
-      console.log("youWillGet: ", youWillGet);
+
+      if(youWillGet < process.env.MIN_SENDING_SUM){
+        insufficient = true;
+
+        res.render('confirm_exchange', {
+          fromCrypto: fromCrypto,
+          toCrypto: toCrypto,
+          exchangeRate: exchangeRate,
+          exchangeCryptoAmount: exchangeCryptoAmount,
+          youWillGet: youWillGet,
+          thisWalletBalance: thisWalletBalance,
+          insufficient: insufficient
+        });
+      }
+
+      //console.log("youWillGet: ", youWillGet);
       youWillGet = youWillGet * 100000000;
-      console.log("youWillGet: ", youWillGet.toFixed(0));
+      //youWillGet = youWillGet.toFixed(0)
+      console.log("youWillGet before fee: ", youWillGet.toFixed(0));
+      let temp = youWillGet;
+      youWillGet = youWillGet - (temp * process.env.EXCHANGE_FEE);
+      console.log("youWillGet after fee: ", youWillGet);
       exchangeCryptoAmount = exchangeCryptoAmount * 100000000;
+
+      const filter = {
+        account: account
+      };
+      let wallet = await Wallet.findOne(filter);
+      console.log("wallet before changes: ", wallet);
+
+      for (let ind = 0; ind < wallet.wallet.length; ind++) {
+        if (wallet.wallet[ind].currency == req.session.toCrypto) {
+          walletExist = true;
+          console.log("wallet.wallet[ind].currency: " + wallet.wallet[ind].currency);
+        }
+      }
+      if (!walletExist) {
+        walletName = req.session.userName + "-" + req.session.toCrypto;
+        console.log("walletExist : " + walletExist);
+        console.log("walletName: ", walletName);
+        var newWalletData = await createNewWallet(walletName, req.session.toCrypto);
+
+        newWalletData = JSON.parse(newWalletData);
+        console.log("newWalletData: ", newWalletData);
+        if (req.session.toCrypto === "BTC") {
+          req.session.oidBTC = newWalletData.oid;
+          req.session.addessBTC = newWalletData.current_address;
+          toUserAddress = newWalletData.current_address;
+        }
+        if (req.session.toCrypto === "LTC") {
+          req.session.oidLTC = newWalletData.oid;
+          req.session.addessLTC = newWalletData.current_address;
+          toUserAddress = newWalletData.current_address;
+        }
+        const oid = newWalletData.oid;
+        const currency = newWalletData.currency;
+        walletName = newWalletData.name;
+        const currentAddress = newWalletData.current_address;
+        const createdDate = newWalletData.created_at;
+        const updatedDate = newWalletData.updated_at;
+
+        // req.session.publicAddress = currentAddress;
+        // req.session.currentOid = oid;
+        // req.session.currentCurrency = currency;
+        let wallet = await addWalletToAccount(account, oid, currency, walletName, currentAddress, createdDate, updatedDate);
+        console.log("wallet after changes: ", wallet);
+      }
       // console.log("fromUserOid: " ,fromUserOid);
       // console.log("toAdminAddress: " ,toAdminAddress);
       // console.log("exchangeCryptoAmount: " ,exchangeCryptoAmount);
       // console.log("fromAdminOid: " ,fromAdminOid);
       // console.log("toUserAddress: " ,toUserAddress);
       // console.log("youWillGet: " ,youWillGet);
-      let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
-      console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
-      let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
-      console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
-      res.redirect("main");
 
+      // let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
+      // console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
+      // let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
+      // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
+      // res.redirect("main");
     } else {
       exchangeCryptoAmount = null;
       console.log("You do not have this currency amount");
@@ -817,7 +923,9 @@ app.post("/confirm_exchange", async function(req, res) {
         toCrypto: toCrypto,
         exchangeRate: exchangeRate,
         exchangeCryptoAmount: exchangeCryptoAmount,
-        thisWalletBalance: thisWalletBalance
+        youWillGet: youWillGet,
+        thisWalletBalance: thisWalletBalance,
+        insufficient: insufficient
       });
     }
   }
