@@ -52,12 +52,6 @@ const getWalletHistory = require(__dirname + "/getWalletHistory.js");
 const createNewWallet = require(__dirname + "/createNewWallet.js");
 const sendCrypto = require(__dirname + "/sendCrypto.js");
 
-// const rahakottData = require(__dirname + "/renameWallet.js");
-// console.log(rahakottData());
-
-//const rahakottData = require(__dirname + "/deleteWallet.js");
-//console.log(rahakottData());
-
 /* to connect URL and creating "userDB" if it's not exist
 (and preserve deprecation warnings)
 it is place where mongodb hosted locally */
