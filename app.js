@@ -808,13 +808,15 @@ app.post("/confirm_exchange", async function(req, res) {
     //youWillGet = youWillGet * 100000000;
     console.log("youWillGet before fee: ", youWillGet);
     let temp = youWillGet;
-    youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(4);
+    let userWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(6);
+    console.log("userWillGet: " ,userWillGet);
+    youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE));
     console.log("youWillGet after fee: ", youWillGet);
     res.render('confirm_exchange', {
       fromCrypto: fromCrypto,
       toCrypto: toCrypto,
       exchangeRate: exchangeRate,
-      youWillGet: youWillGet,
+      youWillGet: userWillGet,
       exchangeCryptoAmount: exchangeCryptoAmount,
       thisWalletBalance: thisWalletBalance,
       insufficient: insufficient
@@ -911,11 +913,11 @@ app.post("/confirm_exchange", async function(req, res) {
       // console.log("toUserAddress: " ,toUserAddress);
       // console.log("youWillGet: " ,youWillGet);
 
-      // let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
-      // console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
-      // let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
-      // console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
-      // res.redirect("main");
+      let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
+      console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
+      let sendCryptoToUser = await sendCrypto(fromAdminOid, toUserAddress, youWillGet, false, false);
+      console.log("sendCryptoToAdmin2: ", sendCryptoToAdmin);
+      res.redirect("main");
     } else {
       youWillGet = 0;
       insufficient = true;
