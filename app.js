@@ -39,7 +39,8 @@ app.set('view engine', 'ejs');
 
 app.use(express.static("public"));
 app.use(expressSession({
-  secret: process.env.SESSION_SECRET
+  secret: process.env.SESSION_SECRET,
+  cookie: {maxAge: 1000*60*20}
 }));
 app.use(bodyParser.urlencoded({
   extended: true
@@ -765,8 +766,8 @@ app.post("/confirm_exchange", async function(req, res) {
       break;
     case "LTCBTC":
       //let ticker = await binance.prices();
-      fromOid = req.session.oidLTC;
-      toUserAddress = req.session.addessBTC;
+      fromUserOid = req.session.oidLTC;
+      toUserAddress = req.session.addressBTC;
 
       fromAdminOid = process.env.ADMIN_OID_BTC;
       toAdminAddress = process.env.ADMIN_ADRESS_LTC;
@@ -906,12 +907,12 @@ app.post("/confirm_exchange", async function(req, res) {
         let wallet = await addWalletToAccount(account, oid, currency, walletName, currentAddress, createdDate, updatedDate);
         console.log("wallet after changes: ", wallet);
       }
-      // console.log("fromUserOid: " ,fromUserOid);
-      // console.log("toAdminAddress: " ,toAdminAddress);
-      // console.log("exchangeCryptoAmount: " ,exchangeCryptoAmount);
-      // console.log("fromAdminOid: " ,fromAdminOid);
-      // console.log("toUserAddress: " ,toUserAddress);
-      // console.log("youWillGet: " ,youWillGet);
+      console.log("fromUserOid: " ,fromUserOid);
+      console.log("toAdminAddress: " ,toAdminAddress);
+      console.log("exchangeCryptoAmount: " ,exchangeCryptoAmount);
+      console.log("fromAdminOid: " ,fromAdminOid);
+      console.log("toUserAddress: " ,toUserAddress);
+      console.log("youWillGet: " ,youWillGet);
 
       let sendCryptoToAdmin = await sendCrypto(fromUserOid, toAdminAddress, exchangeCryptoAmount, false, false);
       console.log("sendCryptoToAdmin1: ", sendCryptoToAdmin);
