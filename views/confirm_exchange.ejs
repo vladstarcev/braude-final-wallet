@@ -41,6 +41,9 @@
             <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
           </div>
         </div>
+        <%if (insufficient) {%>
+          <p style="color: red; font-weight: bold;">Insufficient amount!</p>
+        <%}%>
       </div>
     </div>
 
@@ -54,7 +57,7 @@
       </div>
       <div class="col-sm-6">
         <h2><span class="crypto">0</span> <%= toCrypto %></h2>
-        <button type="submit" name="button" class="btn btn-outline-primary">Calculate</button>
+        <button type="submit" name="Calculate" value="Clicked" class="btn btn-outline-primary">Calculate</button>
       </div>
     </div>
 

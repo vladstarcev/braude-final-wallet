@@ -89,3 +89,8 @@ hr {
 .login-btn-small {
   width: 60%;
 }
+
+.image-text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+}
