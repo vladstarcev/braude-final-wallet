@@ -808,13 +808,15 @@ app.post("/confirm_exchange", async function(req, res) {
     //youWillGet = youWillGet * 100000000;
     console.log("youWillGet before fee: ", youWillGet);
     let temp = youWillGet;
-    youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(4);
+    let userWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(6);
+    console.log("userWillGet: " ,userWillGet);
+    youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE));
     console.log("youWillGet after fee: ", youWillGet);
     res.render('confirm_exchange', {
       fromCrypto: fromCrypto,
       toCrypto: toCrypto,
       exchangeRate: exchangeRate,
-      youWillGet: youWillGet,
+      youWillGet: userWillGet,
       exchangeCryptoAmount: exchangeCryptoAmount,
       thisWalletBalance: thisWalletBalance,
       insufficient: insufficient
