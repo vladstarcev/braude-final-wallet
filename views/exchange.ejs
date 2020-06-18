@@ -1,55 +1,63 @@
 <%- include("header") -%>
 
+<div class="row">
+  <div class="col">
+    <h1>Exchange <span class="crypto">Crypto</span></h1>
+  </div>
+</div>
+
+<br>
+<hr>
+<br>
+
+<form action="/exchange" class="exchange-form" method="POST">
   <div class="row">
     <div class="col">
-      <h1>Exchange <span class="crypto">Crypto</span></h1>
+      <h3>Select currencies for exchange:</h3>
     </div>
   </div>
 
   <br>
-  <hr>
   <br>
 
-  <form action="/exchange" class="exchange-form" method="POST">
-    <div class="row">
-      <div class="col">
-        <h3>Select currencies for exchange:</h3>
-      </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <h3>From</h3>
     </div>
-
-    <br>
-    <br>
-
-    <div class="row">
-      <div class="col-sm-3">
-        <h3>From</h3>
-      </div>
-      <div class="col-sm-3">
-        <select class="form-control exchange-from-select" name="from">
-          <option value="BTC" selected>BTC</option>
-          <option value="LTC">LTC</option>
-        </select>
-      </div>
-      <div class="col-sm-3">
-        <h3>To</h3>
-      </div>
-      <div class="col-sm-3">
-        <select class="form-control exchange-to-select" name="to">
-          <option class="exchange-to-option" value="BTC" disabled>BTC</option>
-          <option class="exchange-to-option" value="LTC">LTC</option>
-        </select>
-      </div>
+    <div class="col-sm-3">
+      <select class="form-control exchange-from-select" name="from">
+        <option value="BTC" selected>BTC</option>
+        <option value="LTC">LTC</option>
+      </select>
     </div>
-
-    <br>
-    <br>
-
-    <div class="row">
-      <div class="col">
-        <button type="submit" name="button" style="width: 10rem;" class="btn btn-outline-primary btn-lg proceed">Proceed</button>
-      </div>
+    <div class="col-sm-3">
+      <h3>To</h3>
     </div>
-  </form>
+    <div class="col-sm-3">
+      <select class="form-control exchange-to-select" name="to">
+        <option class="exchange-to-option" value="BTC" disabled>BTC</option>
+        <option class="exchange-to-option" value="LTC">LTC</option>
+      </select>
+    </div>
+  </div>
 
+  <br>
+  <br>
 
-  <%- include("footer") -%>
+  <div class="row">
+    <div class="col">
+      <button type="submit" name="button" style="width: 10rem;" class="btn btn-outline-primary btn-lg proceed">Proceed</button>
+    </div>
+  </div>
+</form>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<%- include("footer") -%>

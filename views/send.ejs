@@ -66,14 +66,17 @@
     <div class="col-sm-4" style="text-align: left">
       <input name="feeFromAmount" type="checkbox" class="form-check-input big-checkbox" id="subtract">
       <label style="margin-left: 10px;" class="form-check-label" for="subtract">Subtract fees from amount</label>
-      <button style="border-radius: 25px; padding: 2px;" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="The recipient will be credited with the amount that is smaller by the size of the fee">
+      <button style="border-radius: 25px; padding: 2px;" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="The recipient will be credited with the
+amount that is smaller by the size of the fee">
         Info
       </button>
       <br>
       <br>
       <input name="dontUseInternal" type="checkbox" class="form-check-input big-checkbox" id="internal">
       <label style="margin-left: 10px;" class="form-check-label" for="internal">Dont use internal transfer</label>
-      <button style="border-radius: 25px; padding: 2px;" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="Internal transfers are faster and with reduced fee. External transfers involve blockchain and increased fees">
+      <button style="border-radius: 25px; padding: 2px;" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+        title="-Internal transfers are faster and with reduced fee.
+-External transfers involve blockchain and increased fees">
         Info
       </button>
     </div>
@@ -88,13 +91,15 @@
     </div>
     <div class="col-sm-6">
       <%if (walletBalance) {%>
-        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit">Send</button>
+      <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit">Send</button>
       <%} else {%>
-        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit" disabled>Send</button>
+      <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit" disabled>Send</button>
       <%}%>
     </div>
   </div>
   <!-- </form> -->
 </form>
+<br>
+<br>
 
 <%- include("footer") -%>
