@@ -30,7 +30,6 @@ const saltRounds = 10;
 // QRCode - qrcode creation
 const QRCode = require('qrcode');
 
-
 /* Dotenv is a module that loads environment
 variables from a .env file into process.env.  */
 require('dotenv').config();
@@ -128,14 +127,14 @@ app.post("/login", function(req, res) {
   var walletLength;
   let existBTCflag = false;
   let existLTCflag = false;
-  console.log("existBTCflag: ", existBTCflag);
-  console.log("existLTCflag: ", existLTCflag);
+  // console.log("existBTCflag: ", existBTCflag);
+  // console.log("existLTCflag: ", existLTCflag);
   console.log(account, password);
   Wallet.findOne({
     account: account
   }, function(err, wallet) {
     if (err) {
-      res.status(401).end(err);
+      res.status(404).end(err);
       //return console.log(err);
     }
     if (wallet) {
@@ -171,10 +170,14 @@ app.post("/login", function(req, res) {
             wallet = await checkIfWalletExist(req.session.oidBTC);
             console.log("wallet: " + wallet);
             if (!wallet) {
+              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidBTC);
               req.session.oidBTC = false;
               req.session.addressBTC = false;
-              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidBTC);
               //console.log("walletLength", walletLength);
+              if (!walletLength)
+                res.render("index", {
+                  loginError: "Incorrect username / password"
+                });
             }
           }
 
@@ -183,13 +186,16 @@ app.post("/login", function(req, res) {
             wallet = await checkIfWalletExist(req.session.oidLTC);
             console.log("wallet: " + wallet);
             if (!wallet) {
+              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidLTC);
               req.session.oidLTC = false;
               req.session.addressLTC = false;
-              let walletLength = await deleteWalletfromDB(req.session.userName, req.session.oidLTC);
               //console.log("walletLength", walletLength);
+              if (!walletLength)
+                res.render("index", {
+                  loginError: "Incorrect username / password"
+                });
             }
           }
-
           // initialize variables (data) of existing wallets
           if (req.session.oidBTC && existBTCflag) {
             req.session.currentCurrency = "BTC";
@@ -207,7 +213,9 @@ app.post("/login", function(req, res) {
           loginError: "Incorrect username / password"
         });
       })
-    }
+    } else res.render("index", {
+      loginError: "Incorrect username / password"
+    });
   });
 });
 
@@ -305,6 +313,7 @@ app.get("/main", async function(req, res) {
     let name = req.session.userName;
     let currentCurrency = req.session.currentCurrency;
     //let balanceILS;
+
     console.log("I'am in GET func. of MAIN");
     const filter = {
       account: req.session.userName
@@ -507,7 +516,7 @@ app.post("/change-wallet", async function(req, res) {
       }
     }
 
-    if(flag) {
+    if (flag) {
       req.session.currentCurrency = "LTC";
       req.session.currentOid = req.session.oidLTC;
       req.session.publicAddress = req.session.addressLTC;
@@ -534,7 +543,7 @@ app.post("/change-wallet", async function(req, res) {
       }
     }
 
-    if(flag){
+    if (flag) {
       req.session.currentCurrency = "BTC";
       req.session.currentOid = req.session.oidBTC;
       req.session.publicAddress = req.session.addressBTC;
@@ -979,6 +988,9 @@ app.post("/confirm_exchange", async function(req, res) {
 /************************** "Delete Wallet from DB" function *************************/
 async function deleteWalletfromDB(account, walletOid) {
 
+  let doc;
+
+  console.log("walletOid: ", walletOid);
   const filter = {
     account: account
   };
@@ -989,12 +1001,15 @@ async function deleteWalletfromDB(account, walletOid) {
       }
     }
   };
-  let doc = await Wallet.findOneAndUpdate(filter, update, {
+  doc = await Wallet.findOneAndUpdate(filter, update, {
+    safe: true,
     new: true
   });
 
-  if (doc.wallet.length == 0) {
-    let doc = await Wallet.findOneAndDelete(filter);
+  let walletLength = doc.wallet.length;
+
+  if (walletLength === 0) {
+    doc = await Wallet.findOneAndDelete(filter);
     console.log("ACCOUNT was successfully deleted from DB");
     return false;
   }
