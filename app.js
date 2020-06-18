@@ -40,7 +40,9 @@ app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use(expressSession({
   secret: process.env.SESSION_SECRET,
-  cookie: {maxAge: 1000*60*20}
+  cookie: {maxAge: 1000*60*20},
+  saveUninitialized: false,
+  resave: true
 }));
 app.use(bodyParser.urlencoded({
   extended: true
@@ -120,9 +122,13 @@ app.post("/login", function(req, res) {
   Wallet.findOne({
     account: account
   }, function(err, wallet) {
+    console.log("callback");
     // TODO problem when error, need to fix
-    if (err) return console.log(err);
+    if (err) {
+      console.log(err);
+    }
     if(wallet) {
+      console.log("im in wallet: ", wallet);
       bcrypt.compare(req.body.password, wallet.password, async function(err, result) {
         if (result) {
           req.session.userName = account;
@@ -183,7 +189,9 @@ app.post("/login", function(req, res) {
           loginError: "Incorrect username / password"
         });
       })
-    }
+    } else res.render("index", {
+      loginError: "Incorrect username / password"
+    });
   });
 });
 
