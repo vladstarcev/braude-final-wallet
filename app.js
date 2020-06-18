@@ -240,7 +240,9 @@ app.post("/new_account", function(req, res) {
       if (wallet) {
         console.log(wallet);
         console.log("Error. Account with this name already exist.")
-        res.status(401).end('Incorrect Username and/or Password!');
+        res.render("index", {
+          loginError: "Account with this name already exist."
+        });
       } else {
         /* new User: we create a new account in the DB
          only BTC wallet to start */
@@ -1044,7 +1046,7 @@ async function addWalletToAccount(account, walletOid, currency, walName, current
 }
 
 app.get('*', function(req, res) {
-  res.send('what???', 404);
+  res.send('404', 404);
 });
 
 //mongoose.connection.close();
