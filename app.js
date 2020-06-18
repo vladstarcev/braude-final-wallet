@@ -733,7 +733,7 @@ app.post("/exchange", async function(req, res) {
   let insufficient = false;
   req.session.fromCrypto = fromCrypto;
   req.session.toCrypto = toCrypto;
-  //console.log(fromCrypto + toCrypto);
+  console.log(fromCrypto + toCrypto);
   let ticker = await binance.prices();
   switch (fromCrypto + toCrypto) {
     case "BTCLTC":
@@ -773,6 +773,15 @@ app.post("/exchange", async function(req, res) {
         console.log("req.session.thisWalletBalance: ", req.session.thisWalletBalance);
         console.log("First you need to create an LTC wallet");
       }
+      break;
+    case "BTCBTC":
+      //res.redirect('/');
+      console.log("I'am here");
+      res.send('404', 404);
+      break;
+    case "LTCLTC":
+      console.log("I'am here");
+      res.redirect('exchange');
       break;
     default:
       console.log("Error! Currency is not equal to any of the supported currencies.(EXCHANGE)");
