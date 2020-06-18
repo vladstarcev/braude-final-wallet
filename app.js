@@ -53,15 +53,9 @@ app.use(express.static("public"));
 and to save variables in cookies */
 app.use(expressSession({
   secret: process.env.SESSION_SECRET,
-<<<<<<< HEAD
   cookie: {maxAge: 1000*60*20},
   saveUninitialized: false,
   resave: true
-=======
-  cookie: {
-    maxAge: 1000 * 60 * 20
-  }
->>>>>>> 6af6ec2d9ec80747eba425741ae4af4b81217add
 }));
 
 /* body-parser - extracts the entire body part of the
@@ -139,7 +133,6 @@ app.post("/login", function(req, res) {
   Wallet.findOne({
     account: account
   }, function(err, wallet) {
-<<<<<<< HEAD
     console.log("callback");
     // TODO problem when error, need to fix
     if (err) {
@@ -147,13 +140,6 @@ app.post("/login", function(req, res) {
     }
     if(wallet) {
       console.log("im in wallet: ", wallet);
-=======
-    if (err) {
-      res.status(404).end(err);
-      //return console.log(err);
-    }
-    if (wallet) {
->>>>>>> 6af6ec2d9ec80747eba425741ae4af4b81217add
       bcrypt.compare(req.body.password, wallet.password, async function(err, result) {
         if (result) {
           req.session.userName = account;
