@@ -566,6 +566,7 @@ app.get("/send", function(req, res) {
     let sendUSDamount = null;
     let sendCryptoAmount = null;
     let recipientAddress = null;
+    let insufficient = false;
     let walletBalance = req.session.walletBalance;
     let currentCurrency = req.session.currentCurrency;
     console.log("I'am in GET func. of SEND");
@@ -574,7 +575,8 @@ app.get("/send", function(req, res) {
       sendUSDamount: sendUSDamount,
       sendCryptoAmount: sendCryptoAmount,
       walletBalance: walletBalance,
-      currentCurrency: currentCurrency
+      currentCurrency: currentCurrency,
+      insufficient: insufficient
     });
   } else
     res.redirect("/");
@@ -582,6 +584,8 @@ app.get("/send", function(req, res) {
 
 
 app.post("/send", async function(req, res) {
+
+  var insufficient = false;
 
   /********************* "Calculate" button was pressed ***********************/
   if (req.body.Calculate == "Clicked") {
@@ -622,11 +626,12 @@ app.post("/send", async function(req, res) {
       sendUSDamount: sendUSDamount,
       sendCryptoAmount: sendCryptoAmount,
       walletBalance: walletBalance,
-      currentCurrency: currentCurrency
+      currentCurrency: currentCurrency,
+      insufficient: insufficient
     });
   }
 
-  /*********************** "Maximume" button was pressed **********************/
+  /*********************** "Maximum" button was pressed **********************/
   if (req.body.Maximum == "Clicked") {
     let sendUSDamount = null;
     let walletBalance = req.session.walletBalance;
@@ -639,7 +644,8 @@ app.post("/send", async function(req, res) {
       sendUSDamount: sendUSDamount,
       sendCryptoAmount: sendCryptoAmount,
       walletBalance: walletBalance,
-      currentCurrency: currentCurrency
+      currentCurrency: currentCurrency,
+      insufficient: insufficient
     });
   }
 
@@ -702,6 +708,7 @@ app.post("/send", async function(req, res) {
         res.redirect('main');
       });
     } else {
+      insufficient = true;
       console.log("Error! Recipient address or/and sending amount not correct.");
       sendCryptoAmount = null;
       res.render('send', {
@@ -709,7 +716,8 @@ app.post("/send", async function(req, res) {
         sendUSDamount: sendUSDamount,
         sendCryptoAmount: sendCryptoAmount,
         walletBalance: walletBalance,
-        currentCurrency: currentCurrency
+        currentCurrency: currentCurrency,
+        insufficient: insufficient
       });
     }
   }
@@ -839,7 +847,7 @@ app.post("/confirm_exchange", async function(req, res) {
       res.status(404).end("Error! Currency is not equal to any of the supported currencies.(CONFIRM_EXCHANGE)");
   }
 
-  /*********************** "Maximume" button was pressed ************************/
+  /*********************** "Maximum" button was pressed ************************/
   if (req.body.Maximum == "Clicked") {
 
     exchangeCryptoAmount = req.session.thisWalletBalance;
@@ -867,7 +875,7 @@ app.post("/confirm_exchange", async function(req, res) {
     //youWillGet = youWillGet * 100000000;
     console.log("youWillGet before fee: ", youWillGet);
     let temp = youWillGet;
-    let userWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(6);
+    let userWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE)).toFixed(8);
     console.log("userWillGet: ", userWillGet);
     youWillGet = (youWillGet - (temp * process.env.EXCHANGE_FEE));
     console.log("youWillGet after fee: ", youWillGet);
@@ -907,7 +915,6 @@ app.post("/confirm_exchange", async function(req, res) {
           insufficient: insufficient
         });
       }
-
       //console.log("youWillGet: ", youWillGet);
       youWillGet = youWillGet * 100000000;
       //youWillGet = youWillGet.toFixed(0)
