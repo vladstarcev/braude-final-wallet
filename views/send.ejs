@@ -22,43 +22,41 @@
       <h3>Recipient</h3>
     </div>
     <div class="col-sm-6">
-      <input class="form-control" minlength="34" maxlength="34"  pattern="[A-Za-z0-9-]+" type="text" name="recipientAddress" value="<%= recipientAddress %>" autocomplete="off" placeholder="Enter recipient's address" autocomplete="off">
+      <input class="form-control" minlength="34" maxlength="34" pattern="[A-Za-z0-9-]+" type="text" name="recipientAddress" value="<%= recipientAddress %>" autocomplete="off" placeholder="Enter recipient's address" autocomplete="off">
     </div>
   </div>
   <br>
-  <!-- <form action="/send_calc" class="send_calc-form" method="POST"> -->
   <div class="row">
     <div class="col-sm-4">
       <h3>Calculator</h3>
     </div>
     <div class="col-sm-6">
       <div class="input-group mb-3">
-        <input type="number" class="form-control" name="sendUSDamount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input type="number" class="form-control" name="sendUSDamount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" aria-label="Recipient's username"
+          aria-describedby="basic-addon2">
         <div class="input-group-append">
           <button class="btn btn-outline-primary" name="Calculate" value="Clicked" type="submit">Calculate</button>
         </div>
       </div>
     </div>
-    <!-- </form> -->
   </div>
   <br>
-  <!-- <form action="/send_max" class="send_max-form" method="POST"> -->
   <div class="row">
     <div class="col-sm-4">
       <h3>Amount</h3>
     </div>
     <div class="col-sm-6">
       <div class="input-group mb-3">
-        <input type="number" class="form-control" name="sendCryptoAmount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input type="number" class="form-control" name="sendCryptoAmount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off"
+          aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
         </div>
       </div>
       <%if (insufficient) {%>
-        <p style="color: red; font-weight: bold;">Insufficient amount!</p>
+      <p style="color: red; font-weight: bold;">Insufficient amount!</p>
       <%}%>
     </div>
-    <!-- </form> -->
   </div>
   <br>
   <div class="row">
@@ -76,7 +74,7 @@ amount that is smaller by the size of the fee">
       <br>
       <br>
       <input name="dontUseInternal" type="checkbox" class="form-check-input big-checkbox" id="internal">
-      <label style="margin-left: 10px;" class="form-check-label" for="internal">Dont use internal transfer</label>
+      <label style="margin-left: 10px;" class="form-check-label" for="internal">Don't use internal transfer</label>
       <button style="border-radius: 25px; padding: 2px;" type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
         title="-Internal transfers are faster and with reduced fee.
 -External transfers involve blockchain and increased fees">
@@ -87,7 +85,6 @@ amount that is smaller by the size of the fee">
   <br>
   <hr>
   <br>
-  <!-- <form action="/send" class="send-form" method="POST"> -->
   <div class="row">
     <div class="col-sm-6">
       <h3>Available for spending: <span class="crypto"> <%= walletBalance %> </span> <%= currentCurrency %> </h3>
@@ -100,7 +97,6 @@ amount that is smaller by the size of the fee">
       <%}%>
     </div>
   </div>
-  <!-- </form> -->
 </form>
 <br>
 <br>
