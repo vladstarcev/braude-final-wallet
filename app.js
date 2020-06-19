@@ -776,15 +776,6 @@ app.post("/exchange", async function(req, res) {
         console.log("First you need to create an LTC wallet");
       }
       break;
-    case "BTCBTC":
-      //res.redirect('/');
-      console.log("I'am here");
-      res.send('404', 404);
-      break;
-    case "LTCLTC":
-      console.log("I'am here");
-      res.redirect('exchange');
-      break;
     default:
       console.log("Error! Currency is not equal to any of the supported currencies.(EXCHANGE)");
       res.status(404).end("Error! Currency is not equal to any of the supported currencies.(EXCHANGE)");
