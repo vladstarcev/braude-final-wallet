@@ -1,61 +1,91 @@
-<%- include("header") -%>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 
-<div class="row">
-  <div class="col">
-    <h1>Send <span class="crypto">Crypto</span></h1>
+<head>
+  <meta charset="utf-8">
+  <title>Send</title>
+  <script src="https://kit.fontawesome.com/d0156047d2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" href="images/wallet_icon.ico">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/main">
+      <span class="crypto">Crypto</span>Wallet</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/main">Home</a>
+        <a class="nav-item nav-link active" href="/send">Send</a>
+        <a class="nav-item nav-link" href="/exchange">Exchange</a>
+        <a class="nav-item nav-link" href="/">Log out</a>
+      </div>
+    </div>
+  </nav>
+
+  <br>
+  <br>
+
+  <div class="row">
+    <div class="col">
+      <h1>Send <span class="crypto">Crypto</span></h1>
+      <br>
+      <div class="warning-box">
+        <h2 class="warning">Warning!</h2>
+        <p>Withdrawals are <b>irreversible</b>! Please make sure that you are using the <b>correct reciever's address</b>!</p>
+      </div>
+
+    </div>
+  </div>
+
+  <br>
+  <hr>
+  <br>
+
+  <form action="/send" class="send-form" method="POST">
+    <div class="row">
+      <div class="col-sm-4">
+        <h3>Recipient</h3>
+      </div>
+      <div class="col-sm-6">
+        <input class="form-control" minlength="34" maxlength="34" pattern="[A-Za-z0-9-]+" type="text" name="recipientAddress" value="<%= recipientAddress %>" autocomplete="off" placeholder="Enter recipient's address" autocomplete="off">
+      </div>
+    </div>
     <br>
-    <div class="warning-box">
-      <h2 class="warning">Warning!</h2>
-      <p>Withdrawals are <b>irreversible</b>! Please make sure that you are using the <b>correct reciever's address</b>!</p>
-    </div>
-
-  </div>
-</div>
-
-<br>
-<hr>
-<br>
-
-<form action="/send" class="send-form" method="POST">
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Recipient</h3>
-    </div>
-    <div class="col-sm-6">
-      <input class="form-control" minlength="34" maxlength="34" pattern="[A-Za-z0-9-]+" type="text" name="recipientAddress" value="<%= recipientAddress %>" autocomplete="off" placeholder="Enter recipient's address" autocomplete="off">
-    </div>
-  </div>
-  <br>
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Calculator</h3>
-    </div>
-    <div class="col-sm-6">
-      <div class="input-group mb-3">
-        <input type="number" class="form-control" name="sendUSDamount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" aria-label="Recipient's username"
-          aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" name="Calculate" value="Clicked" type="submit">Calculate</button>
+    <div class="row">
+      <div class="col-sm-4">
+        <h3>Calculator</h3>
+      </div>
+      <div class="col-sm-6">
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" name="sendUSDamount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendUSDamount %>" placeholder="Enter amount in USD" autocomplete="off" aria-label="Recipient's username"
+            aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary" name="Calculate" value="Clicked" type="submit">Calculate</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <br>
-  <div class="row">
-    <div class="col-sm-4">
-      <h3>Amount</h3>
-    </div>
-    <div class="col-sm-6">
-      <div class="input-group mb-3">
-        <input type="number" class="form-control" name="sendCryptoAmount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off"
-          aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
-        </div>
+    <br>
+    <div class="row">
+      <div class="col-sm-4">
+        <h3>Amount</h3>
       </div>
-      <%if (insufficient) {%>
-      <p style="color: red; font-weight: bold;">Insufficient amount!</p>
-      <%}%>
+      <div class="col-sm-6">
+        <div class="input-group mb-3">
+          <input type="number" class="form-control" name="sendCryptoAmount" min="0" pattern="[0-9]+([,\.][0-9]+)?" step="any" value="<%= sendCryptoAmount %>" placeholder="Enter amount in <%= currentCurrency %>" autocomplete="off"
+            aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary" name="Maximum" value="Clicked" type="submit">Maximum</button>
+          </div>
+        </div>
+        <%if (insufficient) {%>
+        <p style="color: red; font-weight: bold;">Insufficient amount!</p>
+        <%}%>
     </div>
   </div>
   <br>
@@ -88,13 +118,13 @@ amount that is smaller by the size of the fee">
   <div class="row">
     <div class="col-sm-6">
       <h3>Available for spending: <span class="crypto"> <%= walletBalance %> </span> <%= currentCurrency %> </h3>
-    </div>
-    <div class="col-sm-6">
-      <%if (walletBalance) {%>
-      <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit">Send</button>
-      <%} else {%>
-      <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit" disabled>Send</button>
-      <%}%>
+      </div>
+      <div class="col-sm-6">
+        <%if (walletBalance) {%>
+        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit">Send</button>
+        <%} else {%>
+        <button class="btn btn-outline-primary btn-lg" name="Send" value="Clicked" style="width: 10rem" type="submit" disabled>Send</button>
+        <%}%>
     </div>
   </div>
 </form>
