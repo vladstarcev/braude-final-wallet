@@ -74,7 +74,14 @@ const sendCrypto = require(__dirname + "/sendCrypto.js");
 /* to connect URL and creating "userDB" if it's not exist
 (and preserve deprecation warnings)
 it is place where mongodb hosted locally */
-mongoose.connect("mongodb://localhost:27017/userDB", {
+// mongoose.connect("mongodb://localhost:27017/userDB", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   useFindAndModify: false
+// });
+
+//HEROKU
+mongoose.connect("mongodb+srv://admin-cryptowallet:braude123@cryptowallet-hxkya.mongodb.net/UserDB?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false
@@ -1060,6 +1067,11 @@ app.get('*', function(req, res) {
 
 //mongoose.connection.close();
 
-app.listen(3000, function() {
-  console.log("Server is running on port 3000");
+let port = process.env.PORT;
+if(port == null || port == "") {
+  port = 3000;
+}
+
+app.listen(port, function() {
+  console.log("Server started successfully");
 });
