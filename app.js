@@ -80,7 +80,7 @@ it is place where mongodb hosted locally */
 //   useFindAndModify: false
 // });
 
-//HEROKU
+/* Connection to "Mongo Atlas" - Cloud storage for DB*/
 mongoose.connect("mongodb+srv://admin-cryptowallet:braude123@cryptowallet-hxkya.mongodb.net/UserDB?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
