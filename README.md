@@ -18,3 +18,5 @@ In order to run the project on your local machine, please follow these steps:
 If all the actions were performed correctly, you will see in the terminal the following message: “Server is running successfully”
 
 5.	Open your browser and enter this URL: http://localhost:3000/
+
+The project: https://lit-sands-75778.herokuapp.com/
